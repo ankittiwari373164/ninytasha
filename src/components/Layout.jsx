@@ -21,7 +21,7 @@ export function Navbar() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <Link to="/" className="logo">Ninytasha<span></span>Pvt. Ltd.</Link>
+        <Link to="/" className="logo">Ninytasha<span> </span>Pvt Ltd</Link>
         <nav className="nav-links">
           <NavLink to="/shop">Shop</NavLink>
           <NavLink to="/shop/modak-diyas">Modak Diyas</NavLink>
@@ -85,7 +85,7 @@ export function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div>
-          <div className="logo light">Ninytasha<span></span>Pvt Ltd</div>
+          <div className="logo light">Ninytasha<span> </span>Pvt Ltd</div>
           <p className="muted-l">{BRAND.tagline}. Hand-finished in India by skilled glass artisans.</p>
           <form className="news" onSubmit={sub}><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email for festive offers" /><button className="btn gold sm">Join</button></form>
           <div className="social"><a href="#" aria-label="Instagram"><Instagram size={18} /></a><a href="#" aria-label="Facebook"><Facebook size={18} /></a></div>
