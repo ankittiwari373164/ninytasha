@@ -209,8 +209,8 @@ h3 { font-size: 20px; margin-bottom: 12px }
 .pill.pending { background: #fff1d6; color: #9a6700 } .pill.confirmed, .pill.packed { background: #e3edff; color: #2453a8 } .pill.shipped { background: #efe4ff; color: #6a3fb5 } .pill.delivered, .pill.paid { background: #e2f3e8; color: var(--green) } .pill.cancelled, .pill.failed, .pill.refunded { background: #fbe4e1; color: var(--red) }
 
 /* bulk / info */
-.bulk-hero { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.55)), url(/illustrations/jugs.svg) center/cover; color: #fff; padding: 90px 0 }
-.bulk-hero.about { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.45)), url(/illustrations/wine-glasses.svg) center/cover }
+.bulk-hero { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.55)), url(/products/trio-set.jpg) center/cover; color: #fff; padding: 90px 0 }
+.bulk-hero.about { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.45)), url(/products/bell-diya-set.jpg) center/cover }
 .bulk-hero h1 { font-size: clamp(32px, 5vw, 58px); max-width: 16ch; font-weight: 400 } .bulk-hero p { color: #e6d7c3; max-width: 52ch; margin: 14px 0 26px }
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
 .step { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px } .step svg { color: var(--gold) } .step span { color: var(--muted); font-size: 14px }
@@ -375,7 +375,7 @@ dt { color: var(--muted) } dd { font-weight: 600; word-break: break-word } .bank
 .hero-art { position: relative; height: 460px }
 .ha { position: absolute; border-radius: 26px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.7); border: 1px solid rgba(255,233,196,.18) }
 .ha0 { width: 46%; left: 4%; top: 6% } .ha1 { width: 42%; right: 2%; top: 0 } .ha2 { width: 40%; left: 30%; top: 34%; z-index: 2 } .ha3 { width: 36%; left: 0; bottom: 0 } .ha4 { width: 36%; right: 4%; bottom: 2% }
-.story-collage { display: grid; grid-template-columns: 1fr 1fr; gap: 12px } .story-collage img { border-radius: 20px; width: 100%; aspect-ratio: 1 }
+.story-collage { display: grid; grid-template-columns: 1fr 1fr; gap: 12px } .story-collage img { border-radius: 20px; width: 100%; aspect-ratio: 1; object-fit: cover; box-shadow: var(--shadow) } .story-collage img:nth-child(2) { margin-top: 28px } .story-collage img:nth-child(4) { margin-top: 28px }
 .story-points { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0 22px }
 .story-points div { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px } .story-points svg { color: var(--gold) } .story-points span { font-size: 13.5px; color: var(--muted) }
 .showcase { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px }

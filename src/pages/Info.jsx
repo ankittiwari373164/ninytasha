@@ -30,7 +30,7 @@ export function About() {
       <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate glassware — kitchenware, barware, crockery, temple items and décor — for homes, hospitality, retail and export.</p></Reveal></div></section>
 
       <section className="container section story">
-        <Reveal className="story-collage">{['wine-glasses', 'diyas', 'jugs', 'vases'].map((k) => <img key={k} src={`/illustrations/${k}.svg`} alt="" />)}</Reveal>
+        <Reveal className="story-collage">{['modak-diya', 'crystal-bell', 'diya-combo-4', 'bell-diya-set'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}</Reveal>
         <Reveal className="story-text" delay={0.1}>
           <span className="eyebrow d">Our story</span>
           <h2>Glass, made by hand in Delhi</h2>
