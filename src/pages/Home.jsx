@@ -43,7 +43,7 @@ export default function Home() {
           </div>
           <motion.div className="hero-art" style={{ y }}>
             {HERO_ART.map((k, i) => (
-              <motion.img key={k} src={`/illustrations/${k}.svg`} alt="" className={`ha ha${i}`}
+              <motion.img key={k} src={`/illustrations/${k}.png`} alt="" className={`ha ha${i}`}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }} animate={{ opacity: 1, y: [0, -10, 0], scale: 1 }}
                 transition={{ opacity: { delay: 0.3 + i * 0.12 }, scale: { delay: 0.3 + i * 0.12 }, y: { duration: 5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 } }} />
             ))}
