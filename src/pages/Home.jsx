@@ -9,7 +9,7 @@ import CatIcon from '../components/CatIcon'
 import { Reveal } from '../components/Layout'
 import { BRAND, inr } from '../lib/config'
 
-const HERO_ART = ['wine-glasses', 'jugs', 'diyas', 'mugs-cups', 'vases']
+const HERO_ART = ['wine', 'jug', 'diyas', 'fish neck', 'tumbler']
 
 export default function Home() {
   const { products } = useStore()
