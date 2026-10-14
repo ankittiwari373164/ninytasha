@@ -19,7 +19,6 @@ export const CATEGORIES = [
   { slug: 'diyas', group: 'temple', name: 'Glass Diyas', image: img('modak-diya.jpg'), blurb: 'Modak & fluted oil lamps' },
   { slug: 'bells', group: 'temple', name: 'Temple Bells', image: img('crystal-bell.jpg'), blurb: 'Hand-finished glass bells' },
   { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', image: img('jug.jpg'), blurb: 'Tea, coffee & double-wall' },
-  { slug: 'jars', group: 'kitchen', name: 'Storage Jars', image: art('jars'), blurb: 'Kitchen & pantry jars' },
   { slug: 'jugs', group: 'kitchen', name: 'Jugs & Carafes', image: art('jugs'), blurb: 'Serving jugs & decanters' },
   { slug: 'wine-glasses', group: 'barware', name: 'Wine Glasses', image: img('wine.jpg'), blurb: 'Stemware for red & white' },
   { slug: 'cocktail-glasses', group: 'barware', name: 'Cocktail Glasses', image: img('fish neck.jpg'), blurb: 'Coupes, martini & novelty' },
