@@ -60,7 +60,7 @@ export default function Home() {
 
       <section className="container section story">
         <Reveal className="story-collage">
-          {['modak-diya', 'crystal-bell', 'diya-combo-4', 'bell-diya-set'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}
+          {['modak-diya', 'jug', 'dessert cup', 'champagne'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}
         </Reveal>
         <Reveal delay={0.1} className="story-text">
           <span className="eyebrow d">Our story</span>

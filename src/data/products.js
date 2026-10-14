@@ -8,10 +8,10 @@ const art = (k) => `/illustrations/${k}.svg`
 // A category with no products yet shows an "ask for catalogue" panel instead of an empty grid.
 export const GROUPS = [
   { slug: 'temple', name: 'Temple & Pooja', icon: 'Flame', blurb: 'Diyas, akhand jyot, temple bells', image: img('modak-diya.jpg') },
-  { slug: 'kitchen', name: 'Kitchenware', icon: 'Coffee', blurb: 'Mugs, cups, jars, bottles, jugs', image: art('jugs') },
-  { slug: 'barware', name: 'Bar & Drinkware', icon: 'Wine', blurb: 'Wine, cocktail & champagne glasses, tumblers', image: art('wine-glasses') },
-  { slug: 'crockery', name: 'Crockery', icon: 'Soup', blurb: 'Bowls, plates, dessert cups', image: art('crockery') },
-  { slug: 'decor', name: 'Handicraft & Décor', icon: 'Flower2', blurb: 'Candle stands, holders, jars, vases', image: art('vases') },
+  { slug: 'kitchen', name: 'Kitchenware', icon: 'Coffee', blurb: 'Mugs, cups, jars, bottles, jugs', image: img('jug') },
+  { slug: 'barware', name: 'Bar & Drinkware', icon: 'Wine', blurb: 'Wine, cocktail & champagne glasses, tumblers', image: img('wine') },
+  { slug: 'crockery', name: 'Crockery', icon: 'Soup', blurb: 'Bowls, plates, dessert cups', image: img('dessert cup') },
+  { slug: 'decor', name: 'Handicraft & Décor', icon: 'Flower2', blurb: 'Candle stands, holders, jars, vases', image: img('vases') },
   { slug: 'gifting', name: 'Gift Sets', icon: 'Gift', blurb: 'Festive & corporate combos', image: img('trio-set.jpg') },
 ]
 
