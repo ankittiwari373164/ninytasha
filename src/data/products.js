@@ -17,19 +17,15 @@ export const GROUPS = [
 
 export const CATEGORIES = [
   { slug: 'diyas', group: 'temple', name: 'Glass Diyas', image: img('modak-diya.jpg'), blurb: 'Modak & fluted oil lamps' },
-  { slug: 'akhand-jyot', group: 'temple', name: 'Akhand Jyot', image: art('akhand-jyot'), blurb: 'Tall & table pooja lamps' },
   { slug: 'bells', group: 'temple', name: 'Temple Bells', image: img('crystal-bell.jpg'), blurb: 'Hand-finished glass bells' },
-  { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', image: art('mugs-cups'), blurb: 'Tea, coffee & double-wall' },
+  { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', image: img('jug.jpg'), blurb: 'Tea, coffee & double-wall' },
   { slug: 'jars', group: 'kitchen', name: 'Storage Jars', image: art('jars'), blurb: 'Kitchen & pantry jars' },
-  { slug: 'water-bottles', group: 'kitchen', name: 'Water Bottles', image: art('water-bottles'), blurb: 'Borosilicate bottles' },
   { slug: 'jugs', group: 'kitchen', name: 'Jugs & Carafes', image: art('jugs'), blurb: 'Serving jugs & decanters' },
-  { slug: 'wine-glasses', group: 'barware', name: 'Wine Glasses', image: art('wine-glasses'), blurb: 'Stemware for red & white' },
-  { slug: 'cocktail-glasses', group: 'barware', name: 'Cocktail Glasses', image: art('cocktail-glasses'), blurb: 'Coupes, martini & novelty' },
-  { slug: 'champagne-glasses', group: 'barware', name: 'Champagne Glasses', image: art('champagne-glasses'), blurb: 'Flutes & tulips' },
-  { slug: 'tumblers', group: 'barware', name: 'Tumblers', image: art('tumblers'), blurb: 'Everyday drinking glasses' },
-  { slug: 'crockery', group: 'crockery', name: 'Bowls & Dessert Cups', image: art('crockery'), blurb: 'Serveware & crockery' },
-  { slug: 'candle-stands', group: 'decor', name: 'Candle Stands & Holders', image: art('candle-stands'), blurb: 'Tealight & pillar holders' },
-  { slug: 'vases', group: 'decor', name: 'Vases & Décor Jars', image: art('vases'), blurb: 'Flower vases & zars' },
+  { slug: 'wine-glasses', group: 'barware', name: 'Wine Glasses', image: img('wine.jpg'), blurb: 'Stemware for red & white' },
+  { slug: 'cocktail-glasses', group: 'barware', name: 'Cocktail Glasses', image: img('fish neck.jpg'), blurb: 'Coupes, martini & novelty' },
+  { slug: 'champagne-glasses', group: 'barware', name: 'Champagne Glasses', image: img('champagne.jpg'), blurb: 'Flutes & tulips' },
+  { slug: 'tumblers', group: 'barware', name: 'Tumblers', image: img('tumbler.jpg'), blurb: 'Everyday drinking glasses' },
+  { slug: 'crockery', group: 'crockery', name: 'Bowls & Dessert Cups', image: img('dessert cup.jpg'), blurb: 'Serveware & crockery' },
   { slug: 'gift-sets', group: 'gifting', name: 'Gift Sets', image: img('trio-set.jpg'), blurb: 'Combos for festive gifting' },
 ]
 
