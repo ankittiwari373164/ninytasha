@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { LayoutDashboard, Package, ShoppingCart, Users, MessageSquare, Tag, Mail, LogOut, Plus, Pencil, Trash2, X, Upload, Search, Printer, ExternalLink, TrendingUp, IndianRupee, Clock } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { inr, BRAND } from '../lib/config'
-import { CATEGORIES } from '../data/products'
+import { CATEGORIES, GROUPS } from '../data/products'
 import * as api from '../lib/api'
 
 const NAV = [
@@ -117,7 +117,7 @@ function Orders() {
   }
   const invoice = (o) => {
     const w = window.open('', '_blank')
-    w.document.write(`<html><head><title>Invoice ${o.order_no}</title><style>body{font-family:sans-serif;padding:40px;color:#222}table{width:100%;border-collapse:collapse;margin:20px 0}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:left}.r{text-align:right}</style></head><body><h2>${BRAND.legal}</h2><p>${BRAND.address}${BRAND.gstin ? '<br>GSTIN ' + BRAND.gstin : ''}<br>Ph: ${BRAND.phone} / ${BRAND.phone2}</p><h3>Tax Invoice #${o.order_no}</h3><p>Date: ${new Date(o.created_at).toLocaleDateString('en-IN')}<br>Bill to: ${o.name}${o.company ? ', ' + o.company : ''}<br>${o.address}, ${o.city}, ${o.state} ${o.pincode}<br>${o.phone} · ${o.email}${o.gst ? '<br>GSTIN: ' + o.gst : ''}</p><table><tr><th>Item</th><th>Qty</th><th class=r>Rate</th><th class=r>Amount</th></tr>${o.items.map((i) => `<tr><td>${i.sku} ${i.name}${i.color ? ' (' + i.color + ')' : ''}${i.mode === 'wholesale' ? ' — wholesale' : ''}</td><td>${i.qty}</td><td class=r>₹${i.price}</td><td class=r>₹${i.qty * i.price}</td></tr>`).join('')}<tr><td colspan=3 class=r>Subtotal</td><td class=r>₹${o.subtotal}</td></tr>${o.discount ? `<tr><td colspan=3 class=r>Discount</td><td class=r>-₹${o.discount}</td></tr>` : ''}<tr><td colspan=3 class=r>Shipping</td><td class=r>₹${o.shipping}</td></tr><tr><th colspan=3 class=r>Total</th><th class=r>₹${o.total}</th></tr></table><p>Payment: ${o.payment_method.toUpperCase()} (${o.payment_status})</p><script>print()</script></body></html>`)
+    w.document.write(`<html><head><title>Invoice ${o.order_no}</title><style>body{font-family:sans-serif;padding:40px;color:#222}table{width:100%;border-collapse:collapse;margin:20px 0}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:left}.r{text-align:right}</style></head><body><h2>${BRAND.legal}</h2><p>${BRAND.address}<br>GSTIN ${BRAND.gstin} · CIN ${BRAND.cin}<br>Ph: ${BRAND.phone} / ${BRAND.phone2}</p><h3>Tax Invoice #${o.order_no}</h3><p>Date: ${new Date(o.created_at).toLocaleDateString('en-IN')}<br>Bill to: ${o.name}${o.company ? ', ' + o.company : ''}<br>${o.address}, ${o.city}, ${o.state} ${o.pincode}<br>${o.phone} · ${o.email}${o.gst ? '<br>GSTIN: ' + o.gst : ''}</p><table><tr><th>Item</th><th>Qty</th><th class=r>Rate</th><th class=r>Amount</th></tr>${o.items.map((i) => `<tr><td>${i.sku} ${i.name}${i.color ? ' (' + i.color + ')' : ''}${i.mode === 'wholesale' ? ' — wholesale' : ''}</td><td>${i.qty}</td><td class=r>₹${i.price}</td><td class=r>₹${i.qty * i.price}</td></tr>`).join('')}<tr><td colspan=3 class=r>Subtotal</td><td class=r>₹${o.subtotal}</td></tr>${o.discount ? `<tr><td colspan=3 class=r>Discount</td><td class=r>-₹${o.discount}</td></tr>` : ''}<tr><td colspan=3 class=r>Shipping</td><td class=r>₹${o.shipping}</td></tr><tr><th colspan=3 class=r>Total</th><th class=r>₹${o.total}</th></tr></table><p>Payment: ${o.payment_method.toUpperCase()} (${o.payment_status})</p><p style="font-size:13px;color:#555"><b>Bank details:</b> ${BRAND.bank.beneficiary} · ${BRAND.bank.name} · A/c ${BRAND.bank.account} · IFSC ${BRAND.bank.ifsc} · SWIFT ${BRAND.bank.swift}</p><script>print()</script></body></html>`)
   }
   return (
     <>
@@ -173,7 +173,7 @@ function Products() {
       {ed && <Modal title={ed.id ? 'Edit product' : 'New product'} onClose={() => setEd(null)} wide>
         <form className="fgrid" onSubmit={save}>
           <label className="lbl">SKU<input required value={ed.sku} onChange={set('sku')} /></label>
-          <label className="lbl">Category<select value={ed.category} onChange={set('category')}>{CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select></label>
+          <label className="lbl">Category<select value={ed.category} onChange={set('category')}>{GROUPS.map((g) => <optgroup key={g.slug} label={g.name}>{CATEGORIES.filter((c) => c.group === g.slug).map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</optgroup>)}</select></label>
           <label className="lbl span2">Name<input required value={ed.name} onChange={set('name')} /></label>
           <label className="lbl">Retail price (₹)<input type="number" required value={ed.price} onChange={set('price')} /></label>
           <label className="lbl">MRP (₹)<input type="number" value={ed.mrp} onChange={set('mrp')} /></label>

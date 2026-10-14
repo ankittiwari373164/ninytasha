@@ -48,7 +48,7 @@ h3 { font-size: 20px; margin-bottom: 12px }
 .nav { position: sticky; top: 0; z-index: 40; background: rgba(250, 245, 236, .86); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line) }
 .nav-inner { display: flex; align-items: center; gap: 24px; height: 66px }
 .logo { font-family: var(--serif); font-size: 24px; font-weight: 600; letter-spacing: -.02em } .logo span { color: var(--gold) } .logo.light { color: #fff }
-.nav-links { display: flex; gap: 26px; margin-left: auto; font-weight: 500; font-size: 15px }
+.nav-links { display: flex; gap: 20px; margin-left: auto; font-weight: 500; font-size: 15px }
 .nav-links a { position: relative; padding: 6px 0 } .nav-links a::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--gold); transition: width .3s }
 .nav-links a:hover::after, .nav-links a.active::after { width: 100% }
 .nav-icons { display: flex; gap: 4px }
@@ -332,3 +332,36 @@ h3 { font-size: 20px; margin-bottom: 12px }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important } }
 
 .pdp > *, .cart-layout > *, .shop-layout > * { min-width: 0 }
+
+/* v3: categories & company */
+.groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+.group-tile { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 6px; min-height: 190px; padding: 22px; border-radius: 22px; background: var(--paper); border: 1px solid var(--line); transition: transform .3s, box-shadow .3s }
+.group-tile:hover { transform: translateY(-5px); box-shadow: var(--shadow) }
+.group-tile img { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform .6s } .group-tile:hover img { transform: scale(1.06) }
+.group-tile.has-img { color: #fff; justify-content: flex-end } .group-tile.has-img::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(transparent 20%, rgba(0,0,0,.78)) }
+.group-tile > *:not(img) { position: relative; z-index: 2 } .group-tile b { font-family: var(--serif); font-size: 21px } .gt-sub { font-size: 13px; opacity: .8 }
+.gt-icon { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: #fbf2e0; color: var(--gold); margin-bottom: auto } .has-img .gt-icon { background: rgba(255,255,255,.16); color: #fff; backdrop-filter: blur(6px) }
+.gt-n { display: inline-flex; gap: 4px; align-items: center; font-size: 12.5px; font-weight: 700; color: var(--gold); margin-top: 6px } .has-img .gt-n { color: var(--gold-2) }
+.why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+.why-item { display: flex; gap: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px } .why-item p { color: var(--muted); font-size: 14px; margin-top: 2px }
+.why-item > span { flex: none; width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); display: grid; place-items: center }
+.serve { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px }
+.serve-item { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 22px 10px; border-radius: 20px; background: var(--ink); color: #f3dfb8; font-size: 14px; font-weight: 600 } .serve-item svg { color: var(--gold-2) }
+.range { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px } .range-card { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px }
+.range-card h3 { margin: 12px 0 8px } .range-card ul { list-style: none; display: grid; gap: 4px } .range-card a { color: var(--ink-2) } .range-card a:hover { color: var(--gold) }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px } .facts p { margin-top: 6px }
+.bank-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px } .bank-head svg { color: var(--gold) } .bank-head .btn { margin-left: auto }
+.bank dl, .contact-bottom dl { display: grid; gap: 8px } .bank dl > div, .contact-bottom dl > div { display: grid; grid-template-columns: 150px 1fr; gap: 10px; font-size: 14px; border-bottom: 1px dashed var(--line); padding-bottom: 6px }
+dt { color: var(--muted) } dd { font-weight: 600; word-break: break-word } .bank p { margin-top: 10px } .bank.compact { padding: 16px } .bank.compact dl > div { grid-template-columns: 120px 1fr; font-size: 13px }
+.contact-side { display: grid; gap: 14px; align-content: start } .cc-actions { margin-left: auto; display: flex; gap: 6px } .cc-actions .icon-btn.box { width: 40px; height: 40px }
+.contact-bottom { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-top: 24px }
+.f-group { display: flex; flex-direction: column } .f-g { display: flex !important; gap: 8px; align-items: center; font-weight: 600 } .f-c { padding-left: 36px !important; font-size: 14px }
+.coming { text-align: center; background: var(--paper); border: 1px dashed var(--gold); border-radius: 24px; padding: 44px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px }
+.coming p { color: var(--ink-2); max-width: 52ch } .coming-icon { width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: #fbf2e0; color: var(--gold) }
+@media (max-width: 1080px) { .nav-links { gap: 14px; font-size: 14px } .serve { grid-template-columns: repeat(3, 1fr) } .facts { grid-template-columns: 1fr 1fr } }
+@media (max-width: 860px) {
+  .groups { grid-template-columns: 1fr 1fr; gap: 10px } .group-tile { min-height: 160px; padding: 16px } .group-tile b { font-size: 17px } .gt-sub { font-size: 12px }
+  .why, .range { grid-template-columns: 1fr } .serve { grid-template-columns: repeat(2, 1fr) } .facts, .contact-bottom { grid-template-columns: 1fr }
+  .bank dl > div, .contact-bottom dl > div { grid-template-columns: 1fr; gap: 0 }
+}
+@media (max-width: 860px) { .shop-head { flex-direction: column; align-items: stretch } .shop-tools { justify-content: space-between } .shop-tools select { flex: 1 } }s

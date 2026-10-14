@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { ArrowRight, Truck, ShieldCheck, Flame, Boxes, Gem, Sparkles, Hand, ShoppingBag, Building2, Phone } from 'lucide-react'
+import { ArrowRight, Truck, ShieldCheck, Flame, Boxes, Gem, Sparkles, Hand, ShoppingBag, Building2, Phone, Factory, Warehouse, FileCheck, Hotel, UtensilsCrossed, Store, Landmark, Plane, BadgeCheck } from 'lucide-react'
 import { useStore } from '../context/Store'
-import { CATEGORIES, unitLabel } from '../data/products'
+import { GROUPS, CATEGORIES, unitLabel } from '../data/products'
+import CatIcon from '../components/CatIcon'
 import ProductCard from '../components/ProductCard'
 import { Reveal } from '../components/Layout'
 import { BRAND, inr } from '../lib/config'
@@ -24,7 +25,7 @@ export default function Home() {
         <div className="container hero-content">
           <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>{BRAND.productBrand} · Borosilicate</motion.span>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>Light that<br /><em>glows twice.</em></motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Modak diyas, fluted diyas and crystal bells in hand-finished borosilicate glass. Buy a single piece, or order wholesale from 100 pcs.</motion.p>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Handcrafted borosilicate glass from our Delhi factory: temple diyas and bells, kitchenware, barware, crockery and décor. Buy a single piece, or order wholesale and for export.</motion.p>
           <motion.div className="hero-cta" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
             <Link to="/shop" className="btn gold">Shop the collection <ArrowRight size={18} /></Link>
             <Link to="/corporate" className="btn ghost-l">Wholesale & gifting</Link>
@@ -41,15 +42,20 @@ export default function Home() {
 
       <section className="container section">
         <Reveal><div className="sec-head"><div><span className="eyebrow d">Browse</span><h2>Shop by category</h2></div><Link to="/shop" className="link">View all <ArrowRight size={16} /></Link></div></Reveal>
-        <div className="cats">
-          {CATEGORIES.map((c, i) => (
-            <Reveal key={c.slug} delay={i * 0.06}>
-              <Link to={`/shop/${c.slug}`} className="cat">
-                <img src={c.image} alt={c.name} loading="lazy" />
-                <div><b>{c.name}</b><span>{c.blurb}</span></div>
-              </Link>
-            </Reveal>
-          ))}
+        <div className="groups">
+          {GROUPS.map((g, i) => {
+            const n = CATEGORIES.filter((c) => c.group === g.slug).length
+            return (
+              <Reveal key={g.slug} delay={i * 0.05}>
+                <Link to={`/shop/${g.slug}`} className={'group-tile ' + (g.image ? 'has-img' : '')}>
+                  {g.image && <img src={g.image} alt="" loading="lazy" />}
+                  <span className="gt-icon"><CatIcon name={g.icon} size={26} /></span>
+                  <b>{g.name}</b><span className="gt-sub">{g.blurb}</span>
+                  <span className="gt-n">{n} {n === 1 ? 'category' : 'categories'} <ArrowRight size={14} /></span>
+                </Link>
+              </Reveal>
+            )
+          })}
         </div>
       </section>
 
@@ -76,18 +82,33 @@ export default function Home() {
       <section className="container section story">
         <Reveal className="story-img"><img src="/products/bell-diya-set.jpg" alt="Crystal bell and diya set" /></Reveal>
         <Reveal delay={0.1} className="story-text">
-          <span className="eyebrow d">{BRAND.productBrand}</span>
-          <h2>Pure. Beautiful. Timeless.</h2>
-          <p>{BRAND.productBrand} pieces are shaped and finished by hand in borosilicate glass — the heat-resistant glass used for laboratory ware — so they handle a burning wick or tealight with ease and stay crystal clear for years.</p>
-          <ul className="ticks"><li><Sparkles size={16} /> Works with oil or a tealight</li><li><Sparkles size={16} /> Washable and reusable</li><li><Sparkles size={16} /> Four jewel-tone colourways</li></ul>
+          <span className="eyebrow d">Our story</span>
+          <h2>{BRAND.legal}</h2>
+          <p>Since {BRAND.since} we have been making handcrafted borosilicate glass in Delhi — the heat-resistant glass used for laboratory ware — for kitchens, bars, temples and homes. Our {BRAND.productBrand} range covers everything from diyas and temple bells to mugs, jars, wine glasses and vases.</p>
+          <ul className="ticks"><li><BadgeCheck size={16} /> Heat & thermal-shock resistant</li><li><BadgeCheck size={16} /> Crystal clear, lead-free glass</li><li><BadgeCheck size={16} /> Retail, wholesale & export</li></ul>
           <Link to="/about" className="btn dark">About us</Link>
         </Reveal>
       </section>
 
       <section className="container section">
-        <div className="feat-band">
-          {[[Gem, 'Premium Borosilicate Glass'], [Flame, 'Heat Resistant'], [Sparkles, 'Crystal Clarity'], [Hand, 'Hand Finished']].map(([I, t], i) => (
-            <Reveal key={t} delay={i * 0.08} className="feat"><span><I size={24} /></span><b>{t}</b></Reveal>
+        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Why choose us</span><h2>Made in our own factory, since {BRAND.since}</h2></div></div></Reveal>
+        <div className="why">
+          {[[Hand, 'Handcrafted', 'Every piece is shaped and finished by hand in borosilicate glass.'],
+            [Factory, 'Own factory', 'Manufactured at our unit in SMA Industrial Area, GTK Road, Delhi.'],
+            [Warehouse, 'Ready stock', 'Warehoused in Delhi for quick dispatch across India.'],
+            [Boxes, 'Retail & wholesale', 'Single pieces online, tier pricing from 100 pcs.'],
+            [Plane, 'Export orders', 'Bank transfer & SWIFT payments for international buyers.'],
+            [FileCheck, 'GST invoicing', `Registered company · GSTIN ${BRAND.gstin}.`]].map(([I, t, d], i) => (
+            <Reveal key={t} delay={(i % 3) * 0.08} className="why-item"><span><I size={22} /></span><div><b>{t}</b><p>{d}</p></div></Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="container section">
+        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Who we serve</span><h2>From homes to hotels</h2></div></div></Reveal>
+        <div className="serve">
+          {[[Hotel, 'Hotels & banquets'], [UtensilsCrossed, 'Restaurants & bars'], [Store, 'Retailers & distributors'], [Building2, 'Corporate gifting'], [Landmark, 'Temples & pooja stores'], [ShoppingBag, 'Home buyers']].map(([I, t], i) => (
+            <Reveal key={t} delay={i * 0.05} className="serve-item"><I size={26} strokeWidth={1.6} /><span>{t}</span></Reveal>
           ))}
         </div>
       </section>

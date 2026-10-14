@@ -3,11 +3,37 @@
 // tiers  = wholesale rates from the posters: [{ min, price, carton }], priced per wholesale_unit
 const img = (f) => `/products/${f}`
 
-export const CATEGORIES = [
-  { slug: 'diyas', name: 'Glass Diyas', image: img('modak-diya.jpg'), blurb: 'Modak & fluted oil lamps' },
-  { slug: 'bells', name: 'Crystal Bells', image: img('crystal-bell.jpg'), blurb: 'Hand-finished pooja bells' },
-  { slug: 'gift-sets', name: 'Gift Sets', image: img('trio-set.jpg'), blurb: 'Combos for festive gifting' },
+// Category groups → categories. Products use the category slug.
+// A category with no products yet shows an "ask for catalogue" panel instead of an empty grid.
+export const GROUPS = [
+  { slug: 'temple', name: 'Temple & Pooja', icon: 'Flame', blurb: 'Diyas, akhand jyot, temple bells', image: img('modak-diya.jpg') },
+  { slug: 'kitchen', name: 'Kitchenware', icon: 'Coffee', blurb: 'Mugs, cups, jars, bottles, jugs' },
+  { slug: 'barware', name: 'Bar & Drinkware', icon: 'Wine', blurb: 'Wine, cocktail & champagne glasses, tumblers' },
+  { slug: 'crockery', name: 'Crockery', icon: 'Soup', blurb: 'Bowls, plates, dessert cups' },
+  { slug: 'decor', name: 'Handicraft & Décor', icon: 'Flower2', blurb: 'Candle stands, holders, jars, vases' },
+  { slug: 'gifting', name: 'Gift Sets', icon: 'Gift', blurb: 'Festive & corporate combos', image: img('trio-set.jpg') },
 ]
+
+export const CATEGORIES = [
+  { slug: 'diyas', group: 'temple', name: 'Glass Diyas', image: img('modak-diya.jpg'), blurb: 'Modak & fluted oil lamps' },
+  { slug: 'akhand-jyot', group: 'temple', name: 'Akhand Jyot', blurb: 'Tall & table pooja lamps' },
+  { slug: 'bells', group: 'temple', name: 'Temple Bells', image: img('crystal-bell.jpg'), blurb: 'Hand-finished glass bells' },
+  { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', blurb: 'Tea, coffee & double-wall' },
+  { slug: 'jars', group: 'kitchen', name: 'Storage Jars', blurb: 'Kitchen & pantry jars' },
+  { slug: 'water-bottles', group: 'kitchen', name: 'Water Bottles', blurb: 'Borosilicate bottles' },
+  { slug: 'jugs', group: 'kitchen', name: 'Jugs & Carafes', blurb: 'Serving jugs & decanters' },
+  { slug: 'wine-glasses', group: 'barware', name: 'Wine Glasses', blurb: 'Stemware for red & white' },
+  { slug: 'cocktail-glasses', group: 'barware', name: 'Cocktail Glasses', blurb: 'Coupes, martini & novelty' },
+  { slug: 'champagne-glasses', group: 'barware', name: 'Champagne Glasses', blurb: 'Flutes & tulips' },
+  { slug: 'tumblers', group: 'barware', name: 'Tumblers', blurb: 'Everyday drinking glasses' },
+  { slug: 'crockery', group: 'crockery', name: 'Bowls & Dessert Cups', blurb: 'Serveware & crockery' },
+  { slug: 'candle-stands', group: 'decor', name: 'Candle Stands & Holders', blurb: 'Tealight & pillar holders' },
+  { slug: 'vases', group: 'decor', name: 'Vases & Décor Jars', blurb: 'Flower vases & zars' },
+  { slug: 'gift-sets', group: 'gifting', name: 'Gift Sets', image: img('trio-set.jpg'), blurb: 'Combos for festive gifting' },
+]
+
+export const groupOf = (catSlug) => CATEGORIES.find((c) => c.slug === catSlug)?.group
+export const catsInGroup = (groupSlug) => CATEGORIES.filter((c) => c.group === groupSlug)
 
 export const COLOR_HEX = { Blue: '#1f5fbf', Orange: '#f08a1c', Pink: '#ee8fb5', Green: '#1f7a4c', Clear: '#f4f4f2' }
 

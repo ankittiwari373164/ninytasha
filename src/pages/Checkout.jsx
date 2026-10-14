@@ -5,6 +5,7 @@ import { CreditCard, Banknote, FileText, Tag, Lock } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
+import { BankDetails } from './Info'
 
 const loadRzp = () => new Promise((res) => {
   if (window.Razorpay) return res(true)
@@ -75,7 +76,7 @@ export default function Checkout() {
   const methods = [
     ['razorpay', CreditCard, 'Pay online', 'UPI, cards, netbanking, wallets via Razorpay'],
     ['cod', Banknote, 'Cash on delivery', `+${inr(BRAND.codFee)} · confirmed on WhatsApp`],
-    ['quote', FileText, 'Request a quote', 'For bulk / GST invoices — we reply within 24h'],
+    ['quote', FileText, 'Request a quote / bank transfer', 'For bulk, export & GST invoices'],
   ]
 
   return (
@@ -114,6 +115,7 @@ export default function Checkout() {
                 </label>
               ))}
             </div>
+            {method === 'quote' && <div style={{ marginTop: 14 }}><p className="muted small" style={{ marginBottom: 8 }}>Once we confirm your quote, you can pay by bank transfer:</p><BankDetails compact /></div>}
           </section>
         </div>
         <aside className="summary">

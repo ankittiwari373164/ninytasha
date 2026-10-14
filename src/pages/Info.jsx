@@ -1,30 +1,71 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Mail, Phone, MapPin, MessageCircle, Search, Flame, Hand, Leaf } from 'lucide-react'
+import { ChevronDown, Mail, Phone, MapPin, MessageCircle, Search, Flame, Hand, Leaf, Landmark, Copy, FileText } from 'lucide-react'
+import { GROUPS, CATEGORIES } from '../data/products'
+import CatIcon from '../components/CatIcon'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
 import { Reveal } from '../components/Layout'
 
+export function BankDetails({ compact }) {
+  const { toast } = useStore()
+  const b = BRAND.bank
+  const rows = [['Beneficiary', b.beneficiary], ['Bank', b.name], ['Account no.', b.account], ['IFSC', b.ifsc], ['SWIFT', b.swift], ['Branch', b.branch], ['Beneficiary address', b.beneficiaryAddress]]
+  const copy = () => { navigator.clipboard?.writeText(rows.map(([k, v]) => `${k}: ${v}`).join('\n')); toast('Bank details copied') }
+  return (
+    <div className={'panel bank ' + (compact ? 'compact' : '')}>
+      <div className="bank-head"><Landmark size={20} /><b>Bank details</b><button type="button" className="btn outline sm" onClick={copy}><Copy size={14} /> Copy</button></div>
+      <dl>{rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      <p className="muted small">For wholesale, export and quote payments. Please share the transfer reference with us on WhatsApp or email.</p>
+    </div>
+  )
+}
+
 export function About() {
+  const groups = GROUPS.map((g) => [g, CATEGORIES.filter((c) => c.group === g.slug)])
   return (
     <div className="page">
-      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us</span><h1>{BRAND.legal}</h1><p>The home of {BRAND.productBrand} — hand-finished borosilicate glass diyas and bells for homes, temples and festive gifting.</p></Reveal></div></section>
+      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate glassware, temple items and décor — for homes, hospitality, retail and export.</p></Reveal></div></section>
+
       <section className="container section story">
         <Reveal className="story-img"><img src="/products/crystal-bell.jpg" alt="" /></Reveal>
         <Reveal className="story-text" delay={0.1}>
-          <h2>Pure. Beautiful. Timeless.</h2>
-          <p>Each {BRAND.productBrand} piece — the Modak Diya, the fluted Diya and the Crystal Bell — is shaped and finished by hand in borosilicate glass, chosen for its heat resistance and crystal clarity.</p>
-          <p>We sell to families celebrating at home and to businesses ordering in bulk. Every product is available at a retail price, or at wholesale rates from 100 pieces.</p>
-          <Link to="/contact" className="btn dark">Get in touch</Link>
+          <span className="eyebrow d">Our story</span>
+          <h2>Glass, made by hand in Delhi</h2>
+          <p>{BRAND.legal} was incorporated in {BRAND.since}. From our factory in SMA Industrial Area on GTK Road, we shape and finish borosilicate glass by hand — a glass prized for its clarity and its resistance to heat and sudden temperature change.</p>
+          <p>Our {BRAND.productBrand} range spans kitchenware, bar and drinkware, crockery, temple and pooja items, and handicraft décor. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
         </Reveal>
       </section>
+
+      <section className="container section">
+        <Reveal><div className="sec-head center"><div><span className="eyebrow d">What we make</span><h2>Our product range</h2></div></div></Reveal>
+        <div className="range">
+          {groups.map(([g, cats], i) => (
+            <Reveal key={g.slug} delay={(i % 3) * 0.08} className="range-card">
+              <span className="gt-icon"><CatIcon name={g.icon} size={24} /></span>
+              <h3>{g.name}</h3>
+              <ul>{cats.map((c) => <li key={c.slug}><Link to={`/shop/${c.slug}`}>{c.name}</Link></li>)}</ul>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
       <section className="container section"><div className="values">
-        {[[Hand, 'Hand finished', 'Small variations from piece to piece are the mark of handwork.'], [Flame, 'Built for flame', 'Borosilicate glass handles heat far better than ordinary glass.'], [Leaf, 'Made to last', 'Washable and reusable for years, festival after festival.']].map(([I, t, d], i) => (
+        {[[Hand, 'Commitment to quality', 'Each piece is checked by hand before packing; small variations are the mark of handwork.'], [Flame, 'Built for heat', 'Borosilicate glass handles hot drinks, flames and temperature changes far better than ordinary glass.'], [Leaf, 'Made to last', 'Washable, reusable and lead-free, for years of everyday use.']].map(([I, t, d], i) => (
           <Reveal key={t} delay={i * 0.1} className="value"><I size={28} /><h3>{t}</h3><p>{d}</p></Reveal>
         ))}
       </div></section>
+
+      <section className="container section">
+        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Company details</span><h2>Where to find us</h2></div></div></Reveal>
+        <div className="facts">
+          {BRAND.locations.map((l) => <div key={l.label} className="panel"><span className="sku">{l.label}</span><p><b>{l.address}</b></p></div>)}
+          <div className="panel"><span className="sku">Registration</span><p><b>GSTIN {BRAND.gstin}</b><br /><b>CIN {BRAND.cin}</b></p></div>
+        </div>
+        <div className="center" style={{ marginTop: 24 }}><Link to="/contact" className="btn dark">Contact us</Link></div>
+      </section>
     </div>
   )
 }
@@ -35,23 +76,34 @@ export function Contact() {
   const submit = async (e) => { e.preventDefault(); await api.createEnquiry({ type: 'contact', ...f }); toast('Message sent — we’ll reply soon'); setF({ name: '', email: '', phone: '', message: '' }) }
   return (
     <div className="container page">
-      <h1>Contact us</h1><p className="muted">Questions about an order, a custom design or bulk pricing? We usually reply within a few hours.</p>
+      <h1>Contact us</h1><p className="muted">Questions about an order, wholesale pricing, export or a custom design? Call, WhatsApp or write to us.</p>
       <div className="contact">
         <div className="contact-cards">
-          <a className="panel cc" href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noreferrer"><MessageCircle /><div><b>WhatsApp</b><span>Fastest response</span></div></a>
-          <a className="panel cc" href={`tel:+91${BRAND.phone}`}><Phone /><div><b>{BRAND.phone}</b><span>Business number</span></div></a>
-          <a className="panel cc" href={`tel:+91${BRAND.phone2}`}><Phone /><div><b>{BRAND.phone2}</b><span>Orders & wholesale</span></div></a>
-          <a className="panel cc" href={`mailto:${BRAND.email}`}><Mail /><div><b>{BRAND.email}</b><span>Orders & quotes</span></div></a>
-          <a className="panel cc" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BRAND.mapQuery)}`} target="_blank" rel="noreferrer"><MapPin /><div><b>{BRAND.legal}</b><span>{BRAND.address}</span></div></a>
+          {BRAND.contacts.map((c) => (
+            <div key={c.phone} className="panel cc">
+              <Phone /><div><b>{c.name}</b><span>{c.phone}</span></div>
+              <div className="cc-actions"><a className="icon-btn box" href={`tel:+91${c.phone}`} aria-label="Call"><Phone size={18} /></a><a className="icon-btn box" href={`https://wa.me/91${c.phone}`} target="_blank" rel="noreferrer" aria-label="WhatsApp"><MessageCircle size={18} /></a></div>
+            </div>
+          ))}
+          <a className="panel cc" href={`mailto:${BRAND.email}`}><Mail /><div><b>{BRAND.email}</b><span>Orders, quotes & export enquiries</span></div></a>
+          {BRAND.locations.map((l) => (
+            <a key={l.label} className="panel cc" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.address)}`} target="_blank" rel="noreferrer"><MapPin /><div><b>{l.label}</b><span>{l.address}</span></div></a>
+          ))}
+        </div>
+        <div className="contact-side">
+          <form className="panel fgrid" onSubmit={submit}>
+            <input required placeholder="Name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+            <input placeholder="Phone" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
+            <input required type="email" className="span2" placeholder="Email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+            <textarea required className="span2" rows={4} placeholder="How can we help?" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} />
+            <button className="btn dark span2">Send message</button>
+          </form>
           <iframe className="map" title="Map" loading="lazy" referrerPolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps?q=${encodeURIComponent(BRAND.mapQuery)}&output=embed`} />
         </div>
-        <form className="panel fgrid" onSubmit={submit}>
-          <input required placeholder="Name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-          <input placeholder="Phone" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
-          <input required type="email" className="span2" placeholder="Email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
-          <textarea required className="span2" rows={5} placeholder="How can we help?" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} />
-          <button className="btn dark span2">Send message</button>
-        </form>
+      </div>
+      <div className="contact-bottom">
+        <BankDetails />
+        <div className="panel"><div className="bank-head"><FileText size={20} /><b>Company registration</b></div><dl><div><dt>Company</dt><dd>{BRAND.legal}</dd></div><div><dt>GSTIN</dt><dd>{BRAND.gstin}</dd></div><div><dt>CIN</dt><dd>{BRAND.cin}</dd></div><div><dt>Registered office</dt><dd>{BRAND.address}</dd></div></dl></div>
       </div>
     </div>
   )
@@ -67,6 +119,11 @@ const FAQS = [
     ['Is borosilicate glass safe with a flame?', 'Yes — it tolerates heat and temperature changes much better than regular glass. Always place it on a level, heat-safe surface and never leave a flame unattended.'],
     ['What oil should I use?', 'Any lamp oil, mustard oil, sesame oil or ghee works. Fill to about two-thirds and use a cotton wick.'],
     ['Can I use a tealight instead?', 'Yes — both the Modak Diya and the fluted Diya work with oil or a standard tealight.'],
+  ]],
+  ['Wholesale & export', [
+    ['What is the minimum order for wholesale?', 'Wholesale rates start at 100 pieces per design, with lower rates at 500 and 1,000+ pieces.'],
+    ['Do you take export orders?', `Yes. We accept international bank transfers (SWIFT ${BRAND.bank.swift}). Email ${BRAND.email} with your requirement for a quote.`],
+    ['Can I get a GST invoice?', `Yes — we are a registered company (GSTIN ${BRAND.gstin}). Add your GSTIN at checkout or in your quote request.`],
   ]],
   ['Returns & bulk', [
     ['What if my item arrives broken?', 'Share an unboxing photo or video within 48 hours and we’ll send a free replacement.'],
@@ -86,7 +143,7 @@ const POLICIES = {
   shipping: ['Shipping policy', [`We ship across India through trusted courier partners. Orders are dispatched within 2–4 business days; bulk orders follow the timeline in your quote.`, `Shipping is free on orders above ${inr(BRAND.freeShippingAbove)}; otherwise a flat fee of ${inr(BRAND.shippingFee)} applies. COD orders carry an additional ${inr(BRAND.codFee)}.`, 'You will receive a tracking link by email and SMS once your order ships.']],
   returns: ['Returns & refunds', ['Because our products are fragile and handmade, we accept returns only for items damaged in transit or with manufacturing defects.', 'Report damage within 48 hours of delivery with an unboxing photo or video. We will send a free replacement or a full refund to the original payment method within 5–7 business days.', 'Minor bubbles and slight variations in shape are natural in handmade glass and are not considered defects.']],
   privacy: ['Privacy policy', ['We collect only the information needed to fulfil your order: name, contact details, address and order history.', 'Payments are processed by Razorpay; we never store card details.', 'We never sell your data. You can request deletion of your account at any time by emailing us.']],
-  terms: ['Terms of service', [`This site is operated by ${BRAND.legal}, ${BRAND.address}.${BRAND.gstin ? ' GSTIN ' + BRAND.gstin + '.' : ''}`, 'Retail prices are in INR and include applicable taxes. Wholesale prices are per piece or per set as shown, and exclude GST and shipping.', 'We reserve the right to cancel orders in case of pricing errors or stock unavailability, with a full refund.']],
+  terms: ['Terms of service', [`This site is operated by ${BRAND.legal}, ${BRAND.address}. GSTIN ${BRAND.gstin}. CIN ${BRAND.cin}.`, 'Retail prices are in INR and include applicable taxes. Wholesale prices are per piece or per set as shown, and exclude GST and shipping.', 'We reserve the right to cancel orders in case of pricing errors or stock unavailability, with a full refund.']],
 }
 export function Policy() {
   const { slug } = useParams(); const p = POLICIES[slug]

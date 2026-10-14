@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { unitLabel } from '../data/products'
 import * as api from '../lib/api'
 import { Reveal } from '../components/Layout'
+import { BankDetails } from './Info'
 
 export default function Bulk() {
   const { products, toast } = useStore()
@@ -25,7 +26,7 @@ export default function Bulk() {
     <div className="page">
       <section className="bulk-hero">
         <div className="container">
-          <Reveal><span className="eyebrow">Wholesale & client gifting</span><h1>Festive gifts your clients will actually keep</h1><p>Every {BRAND.productBrand} product at wholesale rates from 100 pieces — pick colours, mix designs, and get pan-India delivery.</p><a href="#quote" className="btn gold">Request a quote</a></Reveal>
+          <Reveal><span className="eyebrow">Wholesale · Export · Corporate gifting</span><h1>Handcrafted glass, by the carton</h1><p>Glassware, kitchenware, temple items and décor straight from our Delhi factory — tier pricing from 100 pieces, GST invoicing, pan-India and export shipping.</p><a href="#quote" className="btn gold">Request a quote</a></Reveal>
         </div>
       </section>
 
@@ -74,6 +75,8 @@ export default function Bulk() {
           </form>
         )}
       </section>
+
+      <section className="container section"><BankDetails /></section>
     </div>
   )
 }

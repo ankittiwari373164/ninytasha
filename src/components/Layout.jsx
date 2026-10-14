@@ -5,6 +5,7 @@ import { Home, LayoutGrid, Heart, ShoppingBag, User, Search, Building2, Instagra
 import { useStore } from '../context/Store'
 import { BRAND } from '../lib/config'
 import * as api from '../lib/api'
+import { GROUPS } from '../data/products'
 
 export function AnnouncementBar() {
   const msgs = ['Free shipping on orders above ₹999', 'Retail & wholesale pricing on every product', 'Call / WhatsApp ' + BRAND.phone]
@@ -24,10 +25,12 @@ export function Navbar() {
         <Link to="/" className="logo">Ninytasha<span>·</span>Exports</Link>
         <nav className="nav-links">
           <NavLink to="/shop">Shop</NavLink>
-          <NavLink to="/shop/diyas">Diyas</NavLink>
-          <NavLink to="/shop/bells">Bells</NavLink>
-          <NavLink to="/shop/gift-sets">Gift Sets</NavLink>
+          <NavLink to="/shop/temple">Temple</NavLink>
+          <NavLink to="/shop/kitchen">Kitchen</NavLink>
+          <NavLink to="/shop/barware">Barware</NavLink>
+          <NavLink to="/shop/decor">Décor</NavLink>
           <NavLink to="/corporate">Wholesale</NavLink>
+          <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </nav>
         <div className="nav-icons">
@@ -41,7 +44,7 @@ export function Navbar() {
         {open && (
           <motion.form onSubmit={go} className="search-drop" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
             <div className="container search-row">
-              <Search size={18} /><input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search diyas, bells, gift sets…" />
+              <Search size={18} /><input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search glasses, mugs, diyas, vases…" />
               <button type="button" className="icon-btn" onClick={() => setOpen(false)}><X size={18} /></button>
             </div>
           </motion.form>
@@ -86,18 +89,18 @@ export function Footer() {
       <div className="container footer-grid">
         <div>
           <div className="logo light">Ninytasha<span>·</span>Exports</div>
-          <p className="muted-l">{BRAND.productBrand} — {BRAND.tagline}, for homes and festive gifting. Retail and wholesale.</p>
+          <p className="muted-l">{BRAND.tagline}. Manufacturer since {BRAND.since} · retail, wholesale & export.</p>
           <form className="news" onSubmit={sub}><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email for festive offers" /><button className="btn gold sm">Join</button></form>
           <div className="social"><a href="#" aria-label="Instagram"><Instagram size={18} /></a><a href="#" aria-label="Facebook"><Facebook size={18} /></a></div>
         </div>
-        <div><h4>Shop</h4><Link to="/shop/diyas">Glass Diyas</Link><Link to="/shop/bells">Crystal Bells</Link><Link to="/shop/gift-sets">Gift Sets</Link><Link to="/corporate">Wholesale & Gifting</Link><Link to="/about">About Us</Link></div>
+        <div><h4>Shop</h4>{GROUPS.map((g) => <Link key={g.slug} to={`/shop/${g.slug}`}>{g.name}</Link>)}<Link to="/corporate">Wholesale & Export</Link></div>
         <div><h4>Help</h4><Link to="/track">Track Order</Link><Link to="/faq">FAQs</Link><Link to="/policy/shipping">Shipping</Link><Link to="/policy/returns">Returns & Refunds</Link><Link to="/contact">Contact Us</Link></div>
         <div><h4>Reach us</h4>
-          <a className="ci" href={`tel:+91${BRAND.phone}`}><Phone size={15} />{BRAND.phone}</a>
-          <a className="ci" href={`tel:+91${BRAND.phone2}`}><Phone size={15} />{BRAND.phone2}</a>
+          {BRAND.contacts.map((c) => <a key={c.phone} className="ci" href={`tel:+91${c.phone}`}><Phone size={15} />{c.phone} · {c.name}</a>)}
           <a className="ci" href={`mailto:${BRAND.email}`}><Mail size={15} />{BRAND.email}</a>
           <a className="ci" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BRAND.mapQuery)}`} target="_blank" rel="noreferrer"><MapPin size={15} />{BRAND.address}</a>
-          {BRAND.gstin && <p className="muted-l small">GSTIN {BRAND.gstin}</p>}
+          <p className="ci"><MapPin size={15} />Factory: {BRAND.locations[1].address}</p>
+          <p className="muted-l small">GSTIN {BRAND.gstin}<br />CIN {BRAND.cin}</p>
         </div>
       </div>
       <div className="container footer-bottom"><span>© {new Date().getFullYear()} {BRAND.legal}</span><span><Link to="/policy/privacy">Privacy</Link> · <Link to="/policy/terms">Terms</Link></span></div>
