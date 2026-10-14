@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Mail, Phone, MapPin, MessageCircle, Search, Flame, Hand, Leaf, Landmark, Copy, FileText } from 'lucide-react'
+import { ChevronDown, Mail, Phone, MapPin, MessageCircle, Search, Flame, Hand, Leaf, Landmark, Copy, FileText, Check } from 'lucide-react'
 import { GROUPS, CATEGORIES } from '../data/products'
 import CatIcon from '../components/CatIcon'
 import { useStore } from '../context/Store'
@@ -27,15 +27,26 @@ export function About() {
   const groups = GROUPS.map((g) => [g, CATEGORIES.filter((c) => c.group === g.slug)])
   return (
     <div className="page">
-      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate glassware, temple items and décor — for homes, hospitality, retail and export.</p></Reveal></div></section>
+      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate glassware — kitchenware, barware, crockery, temple items and décor — for homes, hospitality, retail and export.</p></Reveal></div></section>
 
       <section className="container section story">
-        <Reveal className="story-img"><img src="/products/crystal-bell.jpg" alt="" /></Reveal>
+        <Reveal className="story-collage">{['wine-glasses', 'diyas', 'jugs', 'vases'].map((k) => <img key={k} src={`/illustrations/${k}.svg`} alt="" />)}</Reveal>
         <Reveal className="story-text" delay={0.1}>
           <span className="eyebrow d">Our story</span>
           <h2>Glass, made by hand in Delhi</h2>
           <p>{BRAND.legal} was incorporated in {BRAND.since}. From our factory in SMA Industrial Area on GTK Road, we shape and finish borosilicate glass by hand — a glass prized for its clarity and its resistance to heat and sudden temperature change.</p>
           <p>Our {BRAND.productBrand} range spans kitchenware, bar and drinkware, crockery, temple and pooja items, and handicraft décor. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
+        </Reveal>
+      </section>
+
+      <section className="container section">
+        <div className="mv">
+          <Reveal className="mv-card"><span className="eyebrow d">Our mission</span><p>To make beautiful, durable borosilicate glass by hand — and get it to every kitchen, bar, temple and home that wants it, at an honest price.</p></Reveal>
+          <Reveal delay={0.1} className="mv-card dark"><span className="eyebrow">Our vision</span><p>To be India’s most trusted name for handcrafted glass, at home and in export markets.</p></Reveal>
+        </div>
+        <Reveal className="strengths">
+          <h3>What sets us apart</h3>
+          <ul className="ticks">{['Our own factory and warehouse in Delhi', 'Handcrafted, lead-free borosilicate glass', 'Retail, wholesale and export under one roof', `Registered company since ${BRAND.since} · GST invoicing`, 'Bank transfer & SWIFT payments for bulk buyers'].map((t) => <li key={t}><Check size={16} />{t}</li>)}</ul>
         </Reveal>
       </section>
 

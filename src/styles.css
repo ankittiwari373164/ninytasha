@@ -209,8 +209,8 @@ h3 { font-size: 20px; margin-bottom: 12px }
 .pill.pending { background: #fff1d6; color: #9a6700 } .pill.confirmed, .pill.packed { background: #e3edff; color: #2453a8 } .pill.shipped { background: #efe4ff; color: #6a3fb5 } .pill.delivered, .pill.paid { background: #e2f3e8; color: var(--green) } .pill.cancelled, .pill.failed, .pill.refunded { background: #fbe4e1; color: var(--red) }
 
 /* bulk / info */
-.bulk-hero { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.55)), url(/products/trio-set.jpg) center/cover; color: #fff; padding: 90px 0 }
-.bulk-hero.about { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.45)), url(/products/bell-diya-set.jpg) center/cover }
+.bulk-hero { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.55)), url(/illustrations/jugs.svg) center/cover; color: #fff; padding: 90px 0 }
+.bulk-hero.about { background: linear-gradient(120deg, rgba(20,12,6,.92), rgba(20,12,6,.45)), url(/illustrations/wine-glasses.svg) center/cover }
 .bulk-hero h1 { font-size: clamp(32px, 5vw, 58px); max-width: 16ch; font-weight: 400 } .bulk-hero p { color: #e6d7c3; max-width: 52ch; margin: 14px 0 26px }
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
 .step { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px } .step svg { color: var(--gold) } .step span { color: var(--muted); font-size: 14px }
@@ -365,3 +365,30 @@ dt { color: var(--muted) } dd { font-weight: 600; word-break: break-word } .bank
   .bank dl > div, .contact-bottom dl > div { grid-template-columns: 1fr; gap: 0 }
 }
 @media (max-width: 860px) { .shop-head { flex-direction: column; align-items: stretch } .shop-tools { justify-content: space-between } .shop-tools select { flex: 1 } }
+.illus-tag { position: absolute; right: 10px; bottom: 10px; font-size: 10.5px; font-weight: 600; letter-spacing: .03em; background: rgba(0,0,0,.55); color: #f3dfb8; padding: 3px 8px; border-radius: 99px; backdrop-filter: blur(4px) }
+.illus-note { font-size: 13px; color: var(--muted); margin-top: 10px; text-align: center }
+
+/* v4: general home */
+.hero-general { background: radial-gradient(ellipse at 75% 40%, #4a2c16, #160d07 60%) }
+.hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1.05fr 1fr; gap: 30px; align-items: center; padding: 70px 0 90px }
+.hero-general .hero-content h1 { font-size: clamp(40px, 6.4vw, 82px) }
+.hero-art { position: relative; height: 460px }
+.ha { position: absolute; border-radius: 26px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.7); border: 1px solid rgba(255,233,196,.18) }
+.ha0 { width: 46%; left: 4%; top: 6% } .ha1 { width: 42%; right: 2%; top: 0 } .ha2 { width: 40%; left: 30%; top: 34%; z-index: 2 } .ha3 { width: 36%; left: 0; bottom: 0 } .ha4 { width: 36%; right: 4%; bottom: 2% }
+.story-collage { display: grid; grid-template-columns: 1fr 1fr; gap: 12px } .story-collage img { border-radius: 20px; width: 100%; aspect-ratio: 1 }
+.story-points { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0 22px }
+.story-points div { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px } .story-points svg { color: var(--gold) } .story-points span { font-size: 13.5px; color: var(--muted) }
+.showcase { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px }
+.sc-item { display: block; border-radius: 18px; overflow: hidden; position: relative } .sc-item img { width: 100%; aspect-ratio: 1; transition: transform .5s } .sc-item:hover img { transform: scale(1.06) }
+.sc-item span { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; background: linear-gradient(transparent, rgba(0,0,0,.75)); color: #fff; font-weight: 600; font-size: 14px }
+.export-band { display: grid; grid-template-columns: 1.5fr 1fr; gap: 26px; align-items: center; background: radial-gradient(circle at 85% 30%, #5a2b0e, #1d1510 65%); color: #fff; border-radius: 28px; padding: 40px }
+.export-band p { color: #e3d2bb; margin: 10px 0 20px } .eb-badges { display: grid; gap: 10px }
+.eb-badges div { display: grid; grid-template-columns: 26px 64px 1fr; align-items: center; gap: 8px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 12px 14px; font-size: 14px } .eb-badges svg { color: var(--gold-2) } .eb-badges span { color: #c9b9a4 } .eb-badges b { word-break: break-all }
+.mv { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px } .mv-card { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 28px } .mv-card p { font-family: var(--serif); font-size: 21px; line-height: 1.4 }
+.mv-card.dark { background: var(--ink); color: #fff; border-color: var(--ink) }
+.strengths { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 26px } .strengths .ticks { grid-template-columns: 1fr 1fr; margin: 0 }
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; padding: 40px 0 70px } .hero-art { height: 300px; order: -1 } .ha { border-radius: 18px }
+  .story-points, .mv, .strengths .ticks, .export-band { grid-template-columns: 1fr } .export-band { padding: 26px } .mv-card p { font-size: 18px }
+  .showcase { grid-template-columns: repeat(3, 1fr); gap: 8px } .sc-item span { font-size: 12px; padding: 20px 8px 8px }
+}

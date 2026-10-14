@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Heart, Star, Plus } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { inr } from '../lib/config'
-import { unitLabel, COLOR_HEX } from '../data/products'
+import { unitLabel, COLOR_HEX, isIllustration } from '../data/products'
 
 export default function ProductCard({ p, i = 0 }) {
   const { addToCart, wish, toggleWish } = useStore()
@@ -14,10 +14,11 @@ export default function ProductCard({ p, i = 0 }) {
       <Link to={`/product/${p.id}`} className="card-img">
         <img src={p.images?.[0]} alt={p.name} loading="lazy" />
         {p.pack > 1 && <span className="tag dark">Combo · {p.pack} pcs</span>}
+        {isIllustration(p.images?.[0]) && <span className="illus-tag">Illustration · photo soon</span>}
       </Link>
       <motion.button whileTap={{ scale: 0.8 }} className={'wish ' + (saved ? 'on' : '')} onClick={() => toggleWish(p.id)} aria-label="Save"><Heart size={17} fill={saved ? 'currentColor' : 'none'} /></motion.button>
       <div className="card-body">
-        <span className="sku">{p.sku}</span>
+        <span className="sku">{p.sku}{p.size && p.size.length < 12 ? ` · ${p.size}` : ''}</span>
         <Link to={`/product/${p.id}`} className="card-title">{p.name}</Link>
         {p.reviews > 0 && <div className="rating"><Star size={13} fill="currentColor" /> {p.rating} <span>({p.reviews})</span></div>}
         {p.colors?.length > 0 && <div className="dots">{p.colors.map((c) => <i key={c} title={c} style={{ background: COLOR_HEX[c] || '#ccc' }} />)}</div>}

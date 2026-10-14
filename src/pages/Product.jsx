@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Minus, Plus, Star, Truck, RotateCcw, ShieldCheck, ChevronDown, Share2, Gem, Flame, Sparkles, Hand, Phone, MessageCircle } from 'lucide-react'
 import { useStore } from '../context/Store'
-import { unitPrice, minQty, unitLabel, COLOR_HEX } from '../data/products'
+import { unitPrice, minQty, unitLabel, COLOR_HEX, isIllustration } from '../data/products'
 import { inr, BRAND } from '../lib/config'
 import * as api from '../lib/api'
 import ProductCard from '../components/ProductCard'
@@ -62,6 +62,7 @@ export default function Product() {
           <div className="main-img">
             <AnimatePresence mode="wait"><motion.img key={img} src={p.images[img]} alt={p.name} className={/poster/.test(p.images[img]) ? 'contain' : ''} initial={{ opacity: 0, scale: 1.03 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} /></AnimatePresence>
           </div>
+          {isIllustration(p.images[img]) && <p className="illus-note">Illustration shown — actual product photo coming soon. WhatsApp us for real photos.</p>}
           {p.images.length > 1 && <div className="thumbs">{p.images.map((s, i) => <img key={i} src={s} className={i === img ? 'on' : ''} onClick={() => setImg(i)} alt="" />)}</div>}
         </div>
 
