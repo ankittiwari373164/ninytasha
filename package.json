@@ -1,12 +1,13 @@
 {
-  "name": "r3-glass-store",
+  "name": "ninytasha-store",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "node scripts/sitemap.mjs && vite build",
+    "preview": "vite preview",
+    "sitemap": "node scripts/sitemap.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

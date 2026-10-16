@@ -392,3 +392,13 @@ dt { color: var(--muted) } dd { font-weight: 600; word-break: break-word } .bank
   .story-points, .mv, .strengths .ticks, .export-band { grid-template-columns: 1fr } .export-band { padding: 26px } .mv-card p { font-size: 18px }
   .showcase { grid-template-columns: repeat(3, 1fr); gap: 8px } .sc-item span { font-size: 12px; padding: 20px 8px 8px }
 }
+
+/* v5: policies & sitemap */
+.policy h2 { font-size: 22px; margin: 30px 0 10px } .policy ul { margin: 0 0 14px 20px; color: var(--ink-2); display: grid; gap: 6px }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px } .toc a { font-size: 13px; padding: 6px 12px; border-radius: 99px; background: var(--paper); border: 1px solid var(--line) } .toc a:hover { border-color: var(--gold); color: var(--gold) }
+.policy section { scroll-margin-top: 90px }
+.policy-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line) } .policy-links a { color: var(--gold); font-weight: 600 }
+.sitemap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 20px } .sitemap-grid section { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px }
+.sitemap-grid h3 { font-size: 17px } .sitemap-grid a:hover { color: var(--gold) } .sitemap-grid .wide { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr) } .sitemap-grid .wide h3 { grid-column: 1 / -1 }
+.legal-links a { display: inline !important }
+@media (max-width: 860px) { .sitemap-grid, .sitemap-grid .wide { grid-template-columns: 1fr } }

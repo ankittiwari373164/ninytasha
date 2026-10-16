@@ -1,0 +1,10 @@
+{
+  "name": "Ninytasha Exports — True Glass",
+  "short_name": "Ninytasha",
+  "description": "Handcrafted borosilicate glassware, temple items and décor. Retail, wholesale & export.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf5ec",
+  "theme_color": "#1a130d",
+  "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }, { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+}

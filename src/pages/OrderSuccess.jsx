@@ -1,8 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import { Check } from 'lucide-react'
 
 export default function OrderSuccess() {
+  useSeo({ title: 'Order Confirmed', noindex: true })
   const { no } = useParams()
   const quote = no === 'quote'
   return (

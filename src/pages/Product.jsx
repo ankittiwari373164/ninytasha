@@ -6,6 +6,7 @@ import { useStore } from '../context/Store'
 import { unitPrice, minQty, unitLabel, COLOR_HEX, isIllustration } from '../data/products'
 import { inr, BRAND } from '../lib/config'
 import * as api from '../lib/api'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import ProductCard from '../components/ProductCard'
 
 function Acc({ title, children, open: o = false }) {
@@ -33,6 +34,12 @@ export default function Product() {
   const [rv, setRv] = useState({ rating: 5, text: '', name: '' })
 
   useEffect(() => { if (p) { setMode('retail'); setQty(1); setColor(p.colors?.[0]); setImg(0); api.listReviews(p.id).then(setReviews) } }, [p?.id])
+  useSeo(p ? {
+    title: `${p.name}${p.size ? ' ' + p.size : ''} (${p.sku})`,
+    description: `${p.description.slice(0, 150)} Buy at ₹${p.price}${p.tiers ? ' — wholesale rates available' : ''}.`,
+    path: `/product/${p.id}`, image: p.images?.[0], type: 'product',
+    jsonLd: [productLd(p), breadcrumbs([['Home', '/'], ['Shop', '/shop'], [p.name, `/product/${p.id}`]])],
+  } : { noindex: true })
   if (!p) return <div className="container page empty"><h3>Loading product…</h3></div>
 
   const hasWs = p.tiers?.length > 0

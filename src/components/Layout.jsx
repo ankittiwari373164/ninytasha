@@ -94,7 +94,7 @@ export function Footer() {
           <div className="social"><a href="#" aria-label="Instagram"><Instagram size={18} /></a><a href="#" aria-label="Facebook"><Facebook size={18} /></a></div>
         </div>
         <div><h4>Shop</h4>{GROUPS.map((g) => <Link key={g.slug} to={`/shop/${g.slug}`}>{g.name}</Link>)}<Link to="/corporate">Wholesale & Export</Link></div>
-        <div><h4>Help</h4><Link to="/track">Track Order</Link><Link to="/faq">FAQs</Link><Link to="/policy/shipping">Shipping</Link><Link to="/policy/returns">Returns & Refunds</Link><Link to="/contact">Contact Us</Link></div>
+        <div><h4>Help</h4><Link to="/track">Track Order</Link><Link to="/faq">FAQs</Link><Link to="/shipping-policy">Shipping & Delivery</Link><Link to="/cancellation-and-refund-policy">Cancellation & Refund</Link><Link to="/contact">Contact Us</Link><Link to="/about">About Us</Link></div>
         <div><h4>Reach us</h4>
           {BRAND.contacts.map((c) => <a key={c.phone} className="ci" href={`tel:+91${c.phone}`}><Phone size={15} />{c.phone} · {c.name}</a>)}
           <a className="ci" href={`mailto:${BRAND.email}`}><Mail size={15} />{BRAND.email}</a>
@@ -103,7 +103,7 @@ export function Footer() {
           <p className="muted-l small">GSTIN {BRAND.gstin}<br />CIN {BRAND.cin}</p>
         </div>
       </div>
-      <div className="container footer-bottom"><span>© {new Date().getFullYear()} {BRAND.legal}</span><span><Link to="/policy/privacy">Privacy</Link> · <Link to="/policy/terms">Terms</Link></span></div>
+      <div className="container footer-bottom"><span>© {new Date().getFullYear()} {BRAND.legal}</span><span className="legal-links"><Link to="/privacy-policy">Privacy Policy</Link> · <Link to="/terms-and-conditions">Terms & Conditions</Link> · <Link to="/cancellation-and-refund-policy">Refunds</Link> · <Link to="/sitemap">Sitemap</Link></span></div>
     </footer>
   )
 }

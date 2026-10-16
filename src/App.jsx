@@ -11,7 +11,9 @@ import OrderSuccess from './pages/OrderSuccess'
 import Wishlist from './pages/Wishlist'
 import Account from './pages/Account'
 import Bulk from './pages/Bulk'
-import { About, Contact, FAQ, Policy, NotFound, Track } from './pages/Info'
+import { About, Contact, FAQ, NotFound, Track } from './pages/Info'
+import { PolicyPage, POLICIES } from './pages/Policies'
+import SitemapPage from './pages/SitemapPage'
 import Admin from './admin/Admin'
 
 function Page({ children }) {
@@ -47,7 +49,9 @@ export default function App() {
           <Route path="/contact" element={r(<Contact />)} />
           <Route path="/faq" element={r(<FAQ />)} />
           <Route path="/track" element={r(<Track />)} />
-          <Route path="/policy/:slug" element={r(<Policy />)} />
+          <Route path="/policy/:slug" element={r(<PolicyPage />)} />
+          {Object.keys(POLICIES).map((k) => <Route key={k} path={`/${k}`} element={r(<PolicyPage slug={k} />)} />)}
+          <Route path="/sitemap" element={r(<SitemapPage />)} />
           <Route path="*" element={r(<NotFound />)} />
         </Routes>
       </AnimatePresence>

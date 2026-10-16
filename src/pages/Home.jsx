@@ -8,10 +8,12 @@ import ProductCard from '../components/ProductCard'
 import CatIcon from '../components/CatIcon'
 import { Reveal } from '../components/Layout'
 import { BRAND, inr } from '../lib/config'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 
 const HERO_ART = ['wine', 'jug', 'diyas', 'fish neck', 'tumbler']
 
 export default function Home() {
+  useSeo({ path: '/' })
   const { products } = useStore()
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })

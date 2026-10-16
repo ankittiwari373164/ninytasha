@@ -6,6 +6,7 @@ import { useStore } from '../context/Store'
 import { CATEGORIES, GROUPS, groupOf } from '../data/products'
 import ProductCard from '../components/ProductCard'
 import CatIcon from '../components/CatIcon'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import { BRAND } from '../lib/config'
 
 export default function Shop() {
@@ -22,6 +23,7 @@ export default function Shop() {
   const category = CATEGORIES.find((c) => c.slug === cat)
   const activeGroup = group?.slug || (category && category.group)
   const title = q ? `Results for “${q}”` : group?.name || category?.name || 'All products'
+  useSeo({ title: q ? `Search: ${q}` : (group || category) ? `${title} — Handcrafted Borosilicate Glass` : 'Shop All Products', description: (group || category) ? `Buy handcrafted borosilicate ${title.toLowerCase()} — ${(group || category).blurb}. Retail, wholesale & export from ${'Ninytasha Exports'}, Delhi.` : undefined, path: cat ? `/shop/${cat}` : '/shop', noindex: !!q, jsonLd: breadcrumbs([['Home', '/'], ['Shop', '/shop'], ...(cat ? [[title, `/shop/${cat}`]] : [])]) })
 
   const list = useMemo(() => {
     let l = products.filter((p) => {

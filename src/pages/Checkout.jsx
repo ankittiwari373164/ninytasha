@@ -5,6 +5,7 @@ import { CreditCard, Banknote, FileText, Tag, Lock } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import { BankDetails } from './Info'
 
 const loadRzp = () => new Promise((res) => {
@@ -14,6 +15,7 @@ const loadRzp = () => new Promise((res) => {
 })
 
 export default function Checkout() {
+  useSeo({ title: 'Checkout', noindex: true })
   const { lines, subtotal, clearCart, user, toast } = useStore()
   const nav = useNavigate()
   const [f, setF] = useState({ name: user?.name || '', email: user?.email || '', phone: '', address: '', city: '', state: '', pincode: '', company: '', gst: '', notes: '' })
@@ -128,6 +130,7 @@ export default function Checkout() {
           {codFee > 0 && <div className="row"><span>COD fee</span><b>{inr(codFee)}</b></div>}
           <div className="row total"><span>Total</span><b>{inr(total)}</b></div>
           <button disabled={busy} className="btn dark full">{busy ? 'Processing…' : method === 'quote' ? 'Send quote request' : method === 'cod' ? 'Place COD order' : `Pay ${inr(total)}`}</button>
+          <p className="muted small center">By placing this order you agree to our <Link to="/terms-and-conditions">Terms</Link>, <Link to="/privacy-policy">Privacy Policy</Link> and <Link to="/cancellation-and-refund-policy">Refund Policy</Link>.</p>
           <p className="muted small center"><Lock size={12} /> Secure checkout</p>
         </aside>
       </div>

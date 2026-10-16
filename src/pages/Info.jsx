@@ -8,6 +8,7 @@ import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
 import { Reveal } from '../components/Layout'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 
 export function BankDetails({ compact }) {
   const { toast } = useStore()
@@ -24,6 +25,7 @@ export function BankDetails({ compact }) {
 }
 
 export function About() {
+  useSeo({ title: 'About Us — Borosilicate Glass Manufacturer since 2000', description: `About ${BRAND.legal}: handcrafted borosilicate glassware manufacturer in Delhi since ${BRAND.since}. Factory at SMA Industrial Area, GTK Road. Retail, wholesale & export.`, path: '/about', jsonLd: breadcrumbs([['Home', '/'], ['About us', '/about']]) })
   const groups = GROUPS.map((g) => [g, CATEGORIES.filter((c) => c.group === g.slug)])
   return (
     <div className="page">

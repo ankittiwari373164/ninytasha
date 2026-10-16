@@ -8,9 +8,11 @@ import { Link } from 'react-router-dom'
 import { unitLabel } from '../data/products'
 import * as api from '../lib/api'
 import { Reveal } from '../components/Layout'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import { BankDetails } from './Info'
 
 export default function Bulk() {
+  useSeo({ title: 'Wholesale, Bulk & Export Orders', description: 'Wholesale borosilicate glassware, temple items and décor from our Delhi factory — tier pricing from 100 pcs, GST invoice, pan-India and export shipping. Request a quote.', path: '/corporate' })
   const { products, toast } = useStore()
   const [sp] = useSearchParams()
   const bulk = products.filter((p) => p.tiers)

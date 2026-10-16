@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import { unitLabel } from '../data/products'
 
 export default function Cart() {
+  useSeo({ title: 'Your Bag', noindex: true })
   const { lines, subtotal, setQty, removeItem } = useStore()
   const shipping = subtotal >= BRAND.freeShippingAbove || !subtotal ? 0 : BRAND.shippingFee
   const left = BRAND.freeShippingAbove - subtotal

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Package, Heart, MapPin, LogOut, Shield, HelpCircle } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { inr } from '../lib/config'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import * as api from '../lib/api'
 
 export function AuthForm({ onDone }) {
@@ -35,6 +36,7 @@ export function AuthForm({ onDone }) {
 const STATUS = ['pending', 'confirmed', 'packed', 'shipped', 'delivered']
 
 export default function Account() {
+  useSeo({ title: 'Account', noindex: true })
   const { user, setUser, wish } = useStore()
   const [orders, setOrders] = useState([])
   useEffect(() => { if (user) api.listOrders({ email: user.email }).then(setOrders).catch(() => {}) }, [user])

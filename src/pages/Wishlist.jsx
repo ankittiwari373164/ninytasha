@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Heart } from 'lucide-react'
 import { useStore } from '../context/Store'
+import { useSeo, breadcrumbs, productLd } from '../lib/seo'
 import ProductCard from '../components/ProductCard'
 
 export default function Wishlist() {
+  useSeo({ title: 'Wishlist', noindex: true })
   const { wish, products } = useStore()
   const list = products.filter((p) => wish.includes(p.id))
   return (
