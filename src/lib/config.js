@@ -2,7 +2,7 @@ export const BRAND = {
   name: 'Ninytasha Exports',
   legal: 'Ninytasha Exports Pvt Ltd',
   productBrand: 'True Glass',
-  tagline: 'Handcrafted borosilicate temple items & barware',
+  tagline: 'Handcrafted borosilicate temple items, kitchenware, barware, décor & gifts',
   since: 2000, // year of incorporation (from CIN)
 
   // Registered office (used on invoices, terms, map)
