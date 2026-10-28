@@ -1,174 +1,88 @@
-import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useMemo, useRef } from 'react'
-import { ArrowRight, Truck, ShieldCheck, Flame, Boxes, Hand, ShoppingBag, Building2, Phone, Factory, Warehouse, FileCheck, Hotel, UtensilsCrossed, Store, Landmark, Plane, BadgeCheck, Globe2, Award } from 'lucide-react'
+import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Building2, Palette, Package, FileCheck, Truck, Check } from 'lucide-react'
 import { useStore } from '../context/Store'
-import { GROUPS, CATEGORIES, groupOf } from '../data/products'
-import ProductCard from '../components/ProductCard'
-import CatIcon from '../components/CatIcon'
+import WholesaleButton from '../components/WholesaleEnquiry'
+import { inr, BRAND } from '../lib/config'
+import { Link } from 'react-router-dom'
+import { unitLabel } from '../data/products'
+import * as api from '../lib/api'
 import { Reveal } from '../components/Layout'
 import { useSeo, breadcrumbs, productLd } from '../lib/seo'
-import { BRAND, inr } from '../lib/config'
+import { BankDetails } from './Info'
 
-const HERO_ART = ['kw-56-1', 'kw-69-1', 'kw-62-1', 'kw-66-1', 'kw-64-1']
-
-export default function Home() {
-  useSeo({ path: '/' })
-  const { products } = useStore()
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120])
-
-  // Featured: round-robin across groups so the home page shows the whole range
-  const featured = useMemo(() => {
-    const byGroup = {}
-    products.filter((p) => p.featured).forEach((p) => (byGroup[groupOf(p.category)] ||= []).push(p))
-    const lists = Object.values(byGroup); const out = []
-    for (let i = 0; out.length < 8 && lists.some((l) => l[i]); i++) lists.forEach((l) => l[i] && out.length < 8 && out.push(l[i]))
-    return out
-  }, [products])
-  const retailFrom = products.length ? Math.min(...products.map((p) => p.price)) : 0
+export default function Bulk() {
+  useSeo({ title: 'Wholesale, Bulk & Export Orders', description: 'Wholesale borosilicate glass diyas, akhand jyot, temple bells and cocktail glasses from our Delhi factory — wholesale price on request, GST invoice, pan-India and export shipping. Request a quote.', path: '/corporate' })
+  const { products, toast } = useStore()
+  const [sp] = useSearchParams()
+  const [f, setF] = useState({ name: '', company: '', email: '', phone: '', sku: sp.get('sku') || '', qty: 100, deadline: '', message: '' })
+  const [sent, setSent] = useState(false)
+  const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
+  const submit = async (e) => {
+    e.preventDefault()
+    try { await api.createEnquiry({ type: 'bulk', name: f.name, company: f.company, email: f.email, phone: f.phone, message: `SKU: ${f.sku}\nQty: ${f.qty}\nNeeded by: ${f.deadline}\n\n${f.message}` }); setSent(true) } catch (er) { toast(er.message) }
+  }
 
   return (
-    <>
-      <section className="hero hero-general" ref={ref}>
-        <div className="hero-glow" />
-        <div className="container hero-grid">
-          <div className="hero-content">
-            <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>Borosilicate glass manufacturer · since {BRAND.since}</motion.span>
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>Handcrafted glass<br /><em>for every table.</em></motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Glass oil diyas, akhand jyot, temple bells and handcrafted cocktail & wine glasses — made by hand in our Delhi factory. Buy online at retail price, or get our wholesale rate on WhatsApp.</motion.p>
-            <motion.div className="hero-cta" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-              <Link to="/shop" className="btn gold">Explore products <ArrowRight size={18} /></Link>
-              <Link to="/corporate" className="btn ghost-l">Wholesale & export</Link>
-            </motion.div>
-          </div>
-          <motion.div className="hero-art" style={{ y }}>
-            {HERO_ART.map((k, i) => (
-              <motion.img key={k} src={`/products/${k}.jpg`} alt="Ninytasha handcrafted borosilicate glass" className={`ha ha${i}`}
-                initial={{ opacity: 0, y: 40, scale: 0.9 }} animate={{ opacity: 1, y: [0, -10, 0], scale: 1 }}
-                transition={{ opacity: { delay: 0.3 + i * 0.12 }, scale: { delay: 0.3 + i * 0.12 }, y: { duration: 5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 } }} />
-            ))}
-          </motion.div>
-        </div>
-        {[...Array(12)].map((_, i) => <span key={i} className="ember" style={{ left: `${(i * 8.3) % 100}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${7 + (i % 5)}s` }} />)}
-      </section>
-
-      <section className="usp container">
-        {[[Flame, 'Heat-resistant', 'Borosilicate glass'], [Truck, 'Pan-India delivery', `Free above ${inr(BRAND.freeShippingAbove)}`], [ShieldCheck, 'Safe packing', 'Bubble-wrapped & boxed'], [Boxes, 'Wholesale & export', 'Price on request']].map(([I, a, b], i) => (
-          <Reveal key={a} delay={i * 0.08} className="usp-item"><I size={22} /><div><b>{a}</b><span>{b}</span></div></Reveal>
-        ))}
-      </section>
-
-      <section className="container section story">
-        <Reveal className="story-collage">
-          {['kw-50-1', 'kw-70-1', 'kw-61-1', 'kw-67-1'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}
-        </Reveal>
-        <Reveal delay={0.1} className="story-text">
-          <span className="eyebrow d">Our story</span>
-          <h2>{BRAND.legal}</h2>
-          <p>Since {BRAND.since} we have been making handcrafted borosilicate glass in Delhi — the clear, heat-resistant glass used for laboratory ware — for kitchens, bars, hotels, temples and homes.</p>
-          <div className="story-points">
-            <div><Award size={20} /><b>Commitment to quality</b><span>Every piece is shaped, finished and checked by hand.</span></div>
-            <div><Globe2 size={20} /><b>India & export</b><span>Retail across India; bulk and export orders by bank transfer.</span></div>
-          </div>
-          <Link to="/about" className="btn dark">More about us</Link>
-        </Reveal>
-      </section>
-
-      <section className="container section">
-        <Reveal><div className="sec-head"><div><span className="eyebrow d">Browse</span><h2>Shop by category</h2></div><Link to="/shop" className="link">All products <ArrowRight size={16} /></Link></div></Reveal>
-        <div className="groups">
-          {GROUPS.map((g, i) => {
-            const n = CATEGORIES.filter((c) => c.group === g.slug).length
-            return (
-              <Reveal key={g.slug} delay={i * 0.05}>
-                <Link to={`/shop/${g.slug}`} className={'group-tile ' + (g.image ? 'has-img' : '')}>
-                  {g.image && <img src={g.image} alt="" loading="lazy" />}
-                  <span className="gt-icon"><CatIcon name={g.icon} size={26} /></span>
-                  <b>{g.name}</b><span className="gt-sub">{g.blurb}</span>
-                  <span className="gt-n">{n} {n === 1 ? 'category' : 'categories'} <ArrowRight size={14} /></span>
-                </Link>
-              </Reveal>
-            )
-          })}
+    <div className="page">
+      <section className="bulk-hero">
+        <div className="container">
+          <Reveal><span className="eyebrow">Wholesale · Export · Corporate gifting</span><h1>Handcrafted glass, by the carton</h1><p>Temple & pooja items and handcrafted barware straight from our Delhi factory — wholesale price on request, GST invoicing, pan-India and export shipping.</p><a href="#quote" className="btn gold">Request a quote</a></Reveal>
         </div>
       </section>
 
       <section className="container section">
-        <Reveal><div className="sec-head"><div><span className="eyebrow d">Featured</span><h2>From our collection</h2></div><Link to="/shop" className="link">Shop all <ArrowRight size={16} /></Link></div></Reveal>
-        <div className="grid">{featured.map((p, i) => <ProductCard key={p.id} p={p} i={i} />)}</div>
-      </section>
-
-      <section className="container section">
-        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Why choose us</span><h2>Made in our own factory, since {BRAND.since}</h2></div></div></Reveal>
-        <div className="why">
-          {[[Hand, 'Handcrafted', 'Every piece is shaped and finished by hand in borosilicate glass.'],
-            [Factory, 'Own factory', 'Manufactured at our unit in SMA Industrial Area, GTK Road, Delhi.'],
-            [Warehouse, 'Ready stock', 'Warehoused in Delhi for quick dispatch across India.'],
-            [Boxes, 'Retail & wholesale', 'Retail prices online; wholesale rates on WhatsApp.'],
-            [Plane, 'Export orders', 'International bank transfer (SWIFT) for overseas buyers.'],
-            [FileCheck, 'GST invoicing', `Registered company · GSTIN ${BRAND.gstin}.`]].map(([I, t, d], i) => (
-            <Reveal key={t} delay={(i % 3) * 0.08} className="why-item"><span><I size={22} /></span><div><b>{t}</b><p>{d}</p></div></Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="sale">
-        <div className="container sale-inner">
-          <Reveal>
-            <span className="eyebrow">Two ways to buy</span>
-            <h2>Retail for your home. Wholesale for your business.</h2>
-            <p>Order online at retail price — or tap “Get wholesale price” on any product and we’ll send you our bulk rate on WhatsApp.</p>
-            <div className="choice">
-              <Link to="/shop" className="choice-card"><ShoppingBag /><b>Retail</b><span>From {inr(retailFrom)} · no minimum</span></Link>
-              <Link to="/corporate" className="choice-card gold"><Building2 /><b>Wholesale & export</b><span>Price on request · GST invoice</span></Link>
-            </div>
-          </Reveal>
-          <motion.img src="/products/kw-60-1.jpg" alt="" className="sale-img" whileInView={{ rotate: [-3, 2, -3] }} transition={{ duration: 6, repeat: Infinity }} />
-        </div>
-      </section>
-
-      <section className="container section">
-        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Explore</span><h2>Everything we make</h2></div></div></Reveal>
-        <div className="showcase">
-          {CATEGORIES.map((c, i) => (
-            <Reveal key={c.slug} delay={(i % 5) * 0.05}>
-              <Link to={`/shop/${c.slug}`} className="sc-item"><img src={c.image} alt="" loading="lazy" /><span>{c.name}</span></Link>
-            </Reveal>
+        <div className="steps">
+          {[[Building2, 'Tell us the brief', 'Quantity, budget, deadline'], [Palette, 'Curate colours', 'Matched to your brand palette'], [Package, 'Gift-box & brand', 'Sleeves, cards, logo stickers'], [Truck, 'Pan-India delivery', 'Single or multi-address']].map(([I, t, d], i) => (
+            <Reveal key={t} delay={i * 0.08} className="step"><span className="step-n">0{i + 1}</span><I /><b>{t}</b><span>{d}</span></Reveal>
           ))}
         </div>
       </section>
 
       <section className="container section">
-        <Reveal><div className="sec-head center"><div><span className="eyebrow d">Who we serve</span><h2>From homes to hotels</h2></div></div></Reveal>
-        <div className="serve">
-          {[[Hotel, 'Hotels & banquets'], [UtensilsCrossed, 'Restaurants & bars'], [Store, 'Retailers & distributors'], [Building2, 'Corporate gifting'], [Landmark, 'Temples & pooja stores'], [ShoppingBag, 'Home buyers']].map(([I, t], i) => (
-            <Reveal key={t} delay={i * 0.05} className="serve-item"><I size={26} strokeWidth={1.6} /><span>{t}</span></Reveal>
-          ))}
+        <h2>Wholesale price list</h2>
+        <p className="muted">Retail prices are shown below. For wholesale rates, tap <b>Get wholesale price</b> on any product — we’ll reply on WhatsApp.</p>
+        <div className="table-wrap">
+          <table className="ptable">
+            <thead><tr><th>Product</th><th>Code</th><th>Retail price</th><th>Wholesale</th></tr></thead>
+            <tbody>{products.map((p) => (
+              <tr key={p.id}>
+                <td><Link to={`/product/${p.id}`} className="tcell"><img src={p.images[0]} alt="" />{p.name}</Link></td>
+                <td>{p.sku}</td>
+                <td>{inr(p.price)}<small className="muted">/{unitLabel(p)}</small></td>
+                <td><WholesaleButton product={p} variant="card" label="Get price" /></td>
+              </tr>
+            ))}</tbody>
+          </table>
         </div>
+        <p className="muted small">Temple items ship in 100-piece master boxes. Wholesale rates exclude GST and freight.</p>
       </section>
 
-      <section className="container section">
-        <Reveal className="export-band">
-          <div className="eb-text">
-            <span className="eyebrow">Global presence</span>
-            <h2>Exporting handcrafted glass from Delhi</h2>
-            <p>Send us your list of designs and quantities — we’ll share a formal quote with pricing, packing and lead time. Payments by international wire to our Punjab National Bank account (SWIFT {BRAND.bank.swift}).</p>
-            <div className="hero-cta"><Link to="/corporate" className="btn gold">Request an export quote <ArrowRight size={18} /></Link><a href={`mailto:${BRAND.email}`} className="btn ghost-l">{BRAND.email}</a></div>
-          </div>
-          <div className="eb-badges">
-            {[[BadgeCheck, 'GSTIN', BRAND.gstin], [FileCheck, 'CIN', BRAND.cin], [Globe2, 'SWIFT', BRAND.bank.swift]].map(([I, k, v]) => <div key={k}><I size={20} /><span>{k}</span><b>{v}</b></div>)}
-          </div>
-        </Reveal>
+      <section className="container section quote-wrap" id="quote">
+        <div>
+          <h2>Request a quote</h2>
+          <ul className="ticks">{['Tier pricing from 100 pcs', 'Choose your colour mix', 'Pan-India delivery', `Call ${BRAND.phone}`].map((t) => <li key={t}><Check size={16} />{t}</li>)}</ul>
+          <FileCheck size={80} strokeWidth={1} className="ghost-icon" />
+        </div>
+        {sent ? (
+          <motion.div className="panel center" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}><div className="tick sm"><Check /></div><h3>Thanks, {f.name.split(' ')[0]}!</h3><p>We'll send your quote to {f.email} shortly.</p></motion.div>
+        ) : (
+          <form className="panel fgrid" onSubmit={submit}>
+            <input required placeholder="Your name" value={f.name} onChange={set('name')} />
+            <input required placeholder="Company" value={f.company} onChange={set('company')} />
+            <input required type="email" placeholder="Work email" value={f.email} onChange={set('email')} />
+            <input required placeholder="Phone" value={f.phone} onChange={set('phone')} />
+            <select value={f.sku} onChange={set('sku')}><option value="">Product (any / mixed)</option>{products.map((p) => <option key={p.id} value={p.sku}>{p.sku} — {p.name}</option>)}</select>
+            <input type="number" min={100} placeholder="Quantity" value={f.qty} onChange={set('qty')} />
+            <label className="span2 lbl">Needed by<input type="date" value={f.deadline} onChange={set('deadline')} /></label>
+            <textarea className="span2" rows={3} placeholder="Branding, colours, budget per gift, delivery cities…" value={f.message} onChange={set('message')} />
+            <button className="btn dark span2">Send request</button>
+          </form>
+        )}
       </section>
 
-      <section className="container section">
-        <Reveal className="call-band">
-          <div><h2>Questions or a bulk order?</h2><p>Call or WhatsApp us — we’re happy to help you choose.</p></div>
-          <div className="hero-cta">{BRAND.contacts.map((c, i) => <a key={c.phone} href={`tel:+91${c.phone}`} className={'btn ' + (i ? 'ghost-l' : 'gold')}><Phone size={18} /> {c.phone} · {c.name.replace('Mr. ', '')}</a>)}</div>
-        </Reveal>
-      </section>
-    </>
+      <section className="container section"><BankDetails /></section>
+    </div>
   )
 }
