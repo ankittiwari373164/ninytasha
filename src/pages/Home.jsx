@@ -7,10 +7,10 @@ import { GROUPS, CATEGORIES, groupOf } from '../data/products'
 import ProductCard from '../components/ProductCard'
 import CatIcon from '../components/CatIcon'
 import { Reveal } from '../components/Layout'
-import { BRAND, inr } from '../lib/config'
 import { useSeo, breadcrumbs, productLd } from '../lib/seo'
+import { BRAND, inr } from '../lib/config'
 
-const HERO_ART = ['wine', 'jug', 'diyas', 'fish neck', 'tumbler']
+const HERO_ART = ['kw-56-1', 'kw-69-1', 'kw-62-1', 'kw-66-1', 'kw-64-1']
 
 export default function Home() {
   useSeo({ path: '/' })
@@ -37,7 +37,7 @@ export default function Home() {
           <div className="hero-content">
             <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>Borosilicate glass manufacturer · since {BRAND.since}</motion.span>
             <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>Handcrafted glass<br /><em>for every table.</em></motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Kitchenware, bar & drinkware, crockery, temple items and décor — made by hand in our Delhi factory. Buy a single piece, or order wholesale and for export.</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Glass oil diyas, akhand jyot, temple bells and handcrafted cocktail & wine glasses — made by hand in our Delhi factory. Buy online at retail price, or get our wholesale rate on WhatsApp.</motion.p>
             <motion.div className="hero-cta" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
               <Link to="/shop" className="btn gold">Explore products <ArrowRight size={18} /></Link>
               <Link to="/corporate" className="btn ghost-l">Wholesale & export</Link>
@@ -45,7 +45,7 @@ export default function Home() {
           </div>
           <motion.div className="hero-art" style={{ y }}>
             {HERO_ART.map((k, i) => (
-              <motion.img key={k} src={`/illustrations/${k}.png`} alt="" className={`ha ha${i}`}
+              <motion.img key={k} src={`/products/${k}.jpg`} alt="Ninytasha handcrafted borosilicate glass" className={`ha ha${i}`}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }} animate={{ opacity: 1, y: [0, -10, 0], scale: 1 }}
                 transition={{ opacity: { delay: 0.3 + i * 0.12 }, scale: { delay: 0.3 + i * 0.12 }, y: { duration: 5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 } }} />
             ))}
@@ -55,14 +55,14 @@ export default function Home() {
       </section>
 
       <section className="usp container">
-        {[[Flame, 'Heat-resistant', 'Borosilicate glass'], [Truck, 'Pan-India delivery', `Free above ${inr(BRAND.freeShippingAbove)}`], [ShieldCheck, 'Safe packing', 'Bubble-wrapped & boxed'], [Boxes, 'Wholesale & export', 'From 100 pcs']].map(([I, a, b], i) => (
+        {[[Flame, 'Heat-resistant', 'Borosilicate glass'], [Truck, 'Pan-India delivery', `Free above ${inr(BRAND.freeShippingAbove)}`], [ShieldCheck, 'Safe packing', 'Bubble-wrapped & boxed'], [Boxes, 'Wholesale & export', 'Price on request']].map(([I, a, b], i) => (
           <Reveal key={a} delay={i * 0.08} className="usp-item"><I size={22} /><div><b>{a}</b><span>{b}</span></div></Reveal>
         ))}
       </section>
 
       <section className="container section story">
         <Reveal className="story-collage">
-          {['modak-diya', 'jug', 'dessert cup', 'champagne'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}
+          {['kw-50-1', 'kw-70-1', 'kw-61-1', 'kw-67-1'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}
         </Reveal>
         <Reveal delay={0.1} className="story-text">
           <span className="eyebrow d">Our story</span>
@@ -106,7 +106,7 @@ export default function Home() {
           {[[Hand, 'Handcrafted', 'Every piece is shaped and finished by hand in borosilicate glass.'],
             [Factory, 'Own factory', 'Manufactured at our unit in SMA Industrial Area, GTK Road, Delhi.'],
             [Warehouse, 'Ready stock', 'Warehoused in Delhi for quick dispatch across India.'],
-            [Boxes, 'Retail & wholesale', 'Single pieces online, tier pricing from 100 pcs.'],
+            [Boxes, 'Retail & wholesale', 'Retail prices online; wholesale rates on WhatsApp.'],
             [Plane, 'Export orders', 'International bank transfer (SWIFT) for overseas buyers.'],
             [FileCheck, 'GST invoicing', `Registered company · GSTIN ${BRAND.gstin}.`]].map(([I, t, d], i) => (
             <Reveal key={t} delay={(i % 3) * 0.08} className="why-item"><span><I size={22} /></span><div><b>{t}</b><p>{d}</p></div></Reveal>
@@ -119,13 +119,13 @@ export default function Home() {
           <Reveal>
             <span className="eyebrow">Two ways to buy</span>
             <h2>Retail for your home. Wholesale for your business.</h2>
-            <p>Order single pieces online, or switch to wholesale pricing on any product that offers it — and request a quote for anything in our range.</p>
+            <p>Order online at retail price — or tap “Get wholesale price” on any product and we’ll send you our bulk rate on WhatsApp.</p>
             <div className="choice">
               <Link to="/shop" className="choice-card"><ShoppingBag /><b>Retail</b><span>From {inr(retailFrom)} · no minimum</span></Link>
-              <Link to="/corporate" className="choice-card gold"><Building2 /><b>Wholesale & export</b><span>100+ pcs · GST invoice · SWIFT</span></Link>
+              <Link to="/corporate" className="choice-card gold"><Building2 /><b>Wholesale & export</b><span>Price on request · GST invoice</span></Link>
             </div>
           </Reveal>
-          <motion.img src="/illustrations/gift-sets.svg" alt="" className="sale-img" whileInView={{ rotate: [-3, 2, -3] }} transition={{ duration: 6, repeat: Infinity }} />
+          <motion.img src="/products/kw-60-1.jpg" alt="" className="sale-img" whileInView={{ rotate: [-3, 2, -3] }} transition={{ duration: 6, repeat: Infinity }} />
         </div>
       </section>
 
