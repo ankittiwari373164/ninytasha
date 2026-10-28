@@ -1,31 +1,20 @@
-// Seed catalogue. Used when Supabase isn't configured, and mirrored in supabase/schema.sql.
-// price  = retail price for one unit as sold (a single piece, or the whole combo)
-// tiers  = wholesale rates from the posters: [{ min, price, carton }], priced per wholesale_unit
+// Product catalogue — from "MY RETAIL PRICE ALL ALBUM" (Ninytasha Exports Pvt Ltd).
+// Retail prices only. Wholesale prices are on request (Get wholesale price → WhatsApp).
+// Used when Supabase isn't configured, and mirrored in supabase/schema.sql.
 const img = (f) => `/products/${f}`
-const art = (k) => `/illustrations/${k}.svg`
 
-// Category groups → categories. Products use the category slug.
-// A category with no products yet shows an "ask for catalogue" panel instead of an empty grid.
 export const GROUPS = [
-  { slug: 'temple', name: 'Temple & Pooja', icon: 'Flame', blurb: 'Diyas, akhand jyot, temple bells', image: img('modak-diya.jpg') },
-  { slug: 'kitchen', name: 'Kitchenware', icon: 'Coffee', blurb: 'Mugs, cups, jars, bottles, jugs', image: img('jug.jpg') },
-  { slug: 'barware', name: 'Bar & Drinkware', icon: 'Wine', blurb: 'Wine, cocktail & champagne glasses, tumblers', image: img('wine.jpg') },
-  { slug: 'crockery', name: 'Crockery', icon: 'Soup', blurb: 'Bowls, plates, dessert cups', image: img('dessert cup.jpg') },
-  { slug: 'decor', name: 'Handicraft & Décor', icon: 'Flower2', blurb: 'Candle stands, holders, jars, vases', image: img('vases.jpg') },
-  { slug: 'gifting', name: 'Gift Sets', icon: 'Gift', blurb: 'Festive & corporate combos', image: img('trio-set.jpg') },
+  { slug: 'temple', name: 'Temple & Pooja Items', icon: 'Flame', blurb: 'Modak diyas, akhand jyot, temple bells & pooja sets', image: img('kw-56-1.jpg') },
+  { slug: 'barware', name: 'Barware — Cocktail & Wine Glasses', icon: 'Wine', blurb: 'Handcrafted cocktail glasses, goblets & tumblers', image: img('kw-69-1.jpg') },
 ]
 
 export const CATEGORIES = [
-  { slug: 'diyas', group: 'temple', name: 'Glass Diyas', image: img('modak-diya.jpg'), blurb: 'Modak & fluted oil lamps' },
-  { slug: 'bells', group: 'temple', name: 'Temple Bells', image: img('crystal-bell.jpg'), blurb: 'Hand-finished glass bells' },
-  { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', image: img('jug.jpg'), blurb: 'Tea, coffee & double-wall' },
-  { slug: 'jugs', group: 'kitchen', name: 'Jugs & Carafes', image: art('jugs'), blurb: 'Serving jugs & decanters' },
-  { slug: 'wine-glasses', group: 'barware', name: 'Wine Glasses', image: img('wine.jpg'), blurb: 'Stemware for red & white' },
-  { slug: 'cocktail-glasses', group: 'barware', name: 'Cocktail Glasses', image: img('fish neck.jpg'), blurb: 'Coupes, martini & novelty' },
-  { slug: 'champagne-glasses', group: 'barware', name: 'Champagne Glasses', image: img('champagne.jpg'), blurb: 'Flutes & tulips' },
-  { slug: 'tumblers', group: 'barware', name: 'Tumblers', image: img('tumbler.jpg'), blurb: 'Everyday drinking glasses' },
-  { slug: 'crockery', group: 'crockery', name: 'Bowls & Dessert Cups', image: img('dessert cup.jpg'), blurb: 'Serveware & crockery' },
-  { slug: 'gift-sets', group: 'gifting', name: 'Gift Sets', image: img('trio-set.jpg'), blurb: 'Combos for festive gifting' },
+  { slug: 'modak-diyas', group: 'temple', name: 'Modak Glass Diyas', image: img('kw-50-1.jpg'), blurb: 'Clear & coloured oil diyas' },
+  { slug: 'akhand-jyot', group: 'temple', name: 'Akhand Jyot', image: img('kw-62-1.jpg'), blurb: 'Tall & small pooja lamps' },
+  { slug: 'temple-bells', group: 'temple', name: 'Temple Bells', image: img('kw-64-1.jpg'), blurb: 'Glass bell with Om' },
+  { slug: 'pooja-gift-sets', group: 'temple', name: 'Pooja Gift Sets', image: img('kw-59-1.jpg'), blurb: '3-piece jyot, diya & bell sets' },
+  { slug: 'stemmed-glasses', group: 'barware', name: 'Stemmed Cocktail & Wine Glasses', image: img('kw-70-1.jpg'), blurb: 'Goblets, martini & flutes' },
+  { slug: 'cocktail-tumblers', group: 'barware', name: 'Cocktail Tumblers', image: img('kw-66-1.jpg'), blurb: 'Fumed, flower & icon tumblers' },
 ]
 
 export const groupOf = (catSlug) => CATEGORIES.find((c) => c.slug === catSlug)?.group
@@ -33,82 +22,35 @@ export const catsInGroup = (groupSlug) => CATEGORIES.filter((c) => c.group === g
 
 export const COLOR_HEX = { Blue: '#1f5fbf', Orange: '#f08a1c', Pink: '#ee8fb5', Green: '#1f7a4c', Clear: '#f4f4f2', Amber: '#b8621b' }
 
-const P = (o) => ({ stock: 500, rating: 0, reviews: 0, active: true, featured: true, mrp: 0, min_qty: 1, wholesale_unit: 'piece', color_note: null, ...o })
-const T = (a, b, c, cartons = []) => [{ min: 100, price: a, carton: cartons[0] ?? null }, { min: 500, price: b, carton: cartons[1] ?? null }, { min: 1000, price: c, carton: cartons[2] ?? null }]
+const P = (o) => ({ stock: 500, rating: 0, reviews: 0, active: true, featured: false, mrp: 0, min_qty: 1, tiers: null, wholesale_unit: 'piece', colors: [], size: null, color_note: null, ...o })
 
 export const PRODUCTS = [
-  P({
-    id: 'kw-50', sku: 'KW-50', name: 'Modak Diya Oil Lamp & Tealight', category: 'diyas',
-    price: 149, pack: 1, size: '4 inch', colors: ['Clear'],
-    tiers: T(105, 95, 85),
-    images: [img('modak-diya.jpg'), img('modak-diya-poster.jpg')],
-    description: 'A distinctive ribbed glass diya inspired by the traditional Modak form, designed for oil or tealight use. Hand-finished in premium borosilicate glass — the ribs catch and multiply the glow of the flame.',
-  }),
-  P({
-    id: 'kw-65', sku: 'KW-65', name: 'Bell & Diya Set', category: 'gift-sets',
-    price: 349, pack: 2, size: 'Bell 5" + Diya 3"', colors: ['Blue', 'Orange', 'Pink', 'Green'],
-    tiers: T(190, 155, 140), wholesale_unit: 'set',
-    images: [img('bell-diya-set.jpg'), img('bell-diya-set-poster.jpg')],
-    description: 'A handcrafted Crystal Bell paired with a fluted glass Diya — an elegant festive gifting combination. Perfect for Diwali, pooja and client gifting.',
-  }),
-  P({
-    id: 'kw-64', sku: 'KW-64', name: 'Crystal Bell', category: 'bells',
-    price: 199, pack: 1, size: '5 inch', colors: ['Blue', 'Orange', 'Pink', 'Green'],
-    tiers: T(105, 95, 85, [12, 12, 4]),
-    images: [img('crystal-bell.jpg'), img('crystal-bell-poster.jpg')],
-    description: 'A hand-finished borosilicate glass bell with a hexagonal base, Om motif and a jewel-toned finial. Available in four colourways.',
-  }),
-  P({
-    id: 'kw-64-4', sku: 'KW-64-4', name: 'Diya Oil Lamp & Tealight — Combo of 4', category: 'diyas',
-    price: 799, pack: 4, size: '3 inch', colors: ['Blue', 'Orange', 'Pink', 'Green'], color_note: 'Combo includes one of each colour',
-    tiers: T(105, 95, 85, [12, 12, 4]),
-    images: [img('diya-combo-4.jpg'), img('diya-combo-4-poster.jpg')],
-    description: 'A fluted glass diya that works equally well with oil or a tealight, its ridged base catching the flame’s glow. This combo brings all four colours together.',
-  }),
-  P({
-    id: 'kw-66', sku: 'KW-66', name: 'Bell, Modak Diya & Diya Trio', category: 'gift-sets',
-    price: 1499, pack: 3, size: 'Bell 5" + Diya 3" + Modak Diya 4"', colors: ['Blue', 'Orange', 'Pink', 'Green'], color_note: 'Colour applies to the bell · Modak Diya is clear',
-    tiers: T(290, 270, 250), wholesale_unit: 'set',
-    images: [img('trio-set.jpg'), img('trio-set-poster.jpg')],
-    description: 'The full collection in one set — bell, diya and modak diya together. The flagship option for premium festive and client gifting.',
-  }),
-// ---- Glassware (illustration shown until a product photo is uploaded in admin) ----
-  P({
-    id: 'nt-cg01', sku: 'NT-CG01', name: 'Fish Cocktail Glass — Blue', category: 'cocktail-glasses',
-    price: 350, pack: 1, size: '320 ml', colors: ['Blue'], featured: true,
-    images: [art('cocktail-glasses')],
-    description: 'A playful handcrafted cocktail glass with a fish-shaped bowl in blue borosilicate glass, finished with clear fins on a slender stem. A conversation piece for bars, restaurants and home entertaining.',
-  }),
-  P({
-    id: 'nt-tu01', sku: 'NT-TU01', name: 'Clear Glass Tumbler', category: 'tumblers',
-    price: 140, pack: 1, size: '380 ml', colors: ['Clear'], featured: true,
-    images: [art('tumblers')],
-    description: 'An everyday tapered tumbler in crystal-clear borosilicate glass — light, strong and safe for hot or cold drinks. Ideal for water, juice and iced beverages.',
-  }),
-  P({
-    id: 'nt-wg01', sku: 'NT-WG01', name: 'Tulip Wine Glass', category: 'wine-glasses',
-    price: 175, pack: 1, size: '200 ml', colors: ['Clear'], featured: true,
-    images: [art('wine-glasses')],
-    description: 'A tall tulip-shaped wine glass with a gently flared rim and a fine knop on the stem, hand-finished in borosilicate glass.',
-  }),
-  P({
-    id: 'nt-dc01', sku: 'NT-DC01', name: 'Amber Dessert Cup', category: 'crockery',
-    price: 262, pack: 1, size: '220 ml', colors: ['Amber'], featured: true,
-    images: [art('crockery')],
-    description: 'A wide clear glass bowl on a solid amber pedestal — for desserts, sundaes, mousse and fruit. Part of our Amber collection.',
-  }),
-  P({
-    id: 'nt-ch01', sku: 'NT-CH01', name: 'Champagne Flute', category: 'champagne-glasses',
-    price: 159, pack: 1, size: '220 ml', colors: ['Clear'], featured: true,
-    images: [art('champagne-glasses')],
-    description: 'A slim, straight-sided champagne flute on a long stem that keeps the bubbles lively. Clear borosilicate glass, hand-finished.',
-  }),
-  P({
-    id: 'nt-jg01', sku: 'NT-JG01', name: 'Ribbed Glass Jug', category: 'jugs',
-    price: 229, pack: 1, size: '1000 ml', colors: ['Clear'], featured: true,
-    images: [art('jugs')],
-    description: 'A 1-litre carafe-style jug with an hourglass waist and fluted ribs. Heat-resistant borosilicate glass for water, juices and iced tea.',
-  }),
+  P({"id": "kw-50", "sku": "KW-50", "name": "Modak Glass Oil Diya — Clear", "category": "modak-diyas", "price": 129, "pack": 1, "size": null, "color_note": null, "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-50-1.jpg", "/products/kw-50-2.jpg"]}),
+  P({"id": "kw-51", "sku": "KW-51", "name": "Modak Glass Oil Diya — Clear, Pack of 2", "category": "modak-diyas", "price": 199, "pack": 2, "size": null, "color_note": null, "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-51-1.jpg", "/products/kw-51-2.jpg"]}),
+  P({"id": "kw-52", "sku": "KW-52", "name": "Modak Glass Oil Diya — Clear, Pack of 4", "category": "modak-diyas", "price": 350, "pack": 4, "size": null, "color_note": null, "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-52-1.jpg"]}),
+  P({"id": "kw-53", "sku": "KW-53", "name": "Modak Glass Oil Diya — Clear, Pack of 6", "category": "modak-diyas", "price": 499, "pack": 6, "size": null, "color_note": null, "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-53-1.jpg", "/products/kw-53-2.jpg"]}),
+  P({"id": "kw-54", "sku": "KW-54", "name": "Coloured Modak Glass Oil Diya", "category": "modak-diyas", "price": 99, "pack": 1, "size": null, "color_note": "Colour as shown / assorted", "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-54-1.jpg"]}),
+  P({"id": "kw-55", "sku": "KW-55", "name": "Coloured Modak Glass Oil Diya — Pack of 2", "category": "modak-diyas", "price": 199, "pack": 2, "size": null, "color_note": "Assorted colours", "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-55-1.jpg"]}),
+  P({"id": "kw-56", "sku": "KW-56", "name": "Coloured Modak Glass Oil Diya — Pack of 4", "category": "modak-diyas", "price": 550, "pack": 4, "size": null, "color_note": "Assorted colours", "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-56-1.jpg"]}),
+  P({"id": "kw-57", "sku": "KW-57", "name": "Coloured Modak Glass Oil Diya — Pack of 6", "category": "modak-diyas", "price": 499, "pack": 6, "size": null, "color_note": "Assorted colours", "description": "Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-57-1.jpg", "/products/kw-57-2.jpg", "/products/kw-57-3.jpg"]}),
+  P({"id": "kw-58", "sku": "KW-58", "name": "Tall Akhand Jyot Aarti Diya — Large", "category": "akhand-jyot", "price": 250, "pack": 1, "size": "Large", "color_note": "Available in six assorted colours", "description": "Handcrafted borosilicate akhand jyot — a tall aarti glass diya with a multi-wick clear bowl on a tiered glass stem. A traditional oil lamp for pooja, Diwali, mandir and spiritual gifting.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-58-1.jpg"]}),
+  P({"id": "kw-59", "sku": "KW-59", "name": "Akhand Jyot, Small Diya & Bell — 3-Piece Pooja Set", "category": "pooja-gift-sets", "price": 499, "pack": 3, "size": null, "color_note": "Available in six assorted colours", "description": "A three-piece pooja gift set: a handcrafted glass akhand jyot with a clear bowl on an amber base, a small akhand jyot and a glass temple bell.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-59-1.jpg"]}),
+  P({"id": "kw-60", "sku": "KW-60", "name": "3-Piece Pooja Gift Set with Box", "category": "pooja-gift-sets", "price": 699, "pack": 3, "size": null, "color_note": "Available in six assorted colours", "description": "The three-piece akhand jyot, small diya and glass bell set, presented in a gift box — ready for Diwali and festive gifting.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-60-1.jpg"]}),
+  P({"id": "kw-61", "sku": "KW-61", "name": "Small Akhand Jyot", "category": "akhand-jyot", "price": 150, "pack": 1, "size": "Small", "color_note": "Available in six assorted colours", "description": "Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-61-1.jpg"]}),
+  P({"id": "kw-62", "sku": "KW-62", "name": "Small Akhand Jyot — Pack of 2", "category": "akhand-jyot", "price": 299, "pack": 2, "size": "Small", "color_note": "Available in six assorted colours", "description": "Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-62-1.jpg"]}),
+  P({"id": "kw-63", "sku": "KW-63", "name": "Small Akhand Jyot — Pack of 4", "category": "akhand-jyot", "price": 599, "pack": 4, "size": "Small", "color_note": "Available in six assorted colours", "description": "Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.", "featured": false, "packing": "100 pcs master box", "images": ["/products/kw-63-1.jpg"]}),
+  P({"id": "kw-64", "sku": "KW-64", "name": "Glass Temple Bell with Om", "category": "temple-bells", "price": 150, "pack": 1, "size": null, "color_note": null, "description": "Handcrafted glass temple bell with an Om motif in amber colour, a twisted glass stem and a red finial — a decorative pooja bell for your mandir.", "featured": true, "packing": "100 pcs master box", "images": ["/products/kw-64-1.jpg"]}),
+  P({"id": "kw-65", "sku": "KW-65", "name": "Silver-Fumed Goblet Cocktail Glass", "category": "stemmed-glasses", "price": 699, "pack": 1, "size": null, "color_note": "Assorted colours", "description": "Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-65-1.jpg"]}),
+  P({"id": "kw-66", "sku": "KW-66", "name": "Silver-Fumed Cocktail Tumbler", "category": "cocktail-tumblers", "price": 399, "pack": 1, "size": "4.5 inch", "color_note": "Single or assorted colours", "description": "Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-66-1.jpg"]}),
+  P({"id": "kw-67", "sku": "KW-67", "name": "Flower Plant Cocktail Tumbler", "category": "cocktail-tumblers", "price": 399, "pack": 1, "size": "4.5 inch", "color_note": "Assorted colours", "description": "Handcrafted borosilicate cocktail glass with a tiny embossed flower-plant design — a cheerful glass for cocktails, juices and iced drinks.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-67-1.jpg"]}),
+  P({"id": "kw-68", "sku": "KW-68", "name": "Ribbed Martini Cocktail Glass", "category": "stemmed-glasses", "price": 299, "pack": 1, "size": "8 inch", "color_note": "Transparent", "description": "Handcrafted borosilicate martini-style cocktail glass with a ribbed bowl on a slender stem. Clear, transparent glass.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-68-1.jpg"]}),
+  P({"id": "kw-69", "sku": "KW-69", "name": "Silver-Fumed Stemmed Goblet", "category": "stemmed-glasses", "price": 399, "pack": 1, "size": null, "color_note": "Single or assorted colours", "description": "Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.", "featured": false, "packing": "Master box packing", "images": ["/products/kw-69-1.jpg"]}),
+  P({"id": "kw-70", "sku": "KW-70", "name": "Coloured Stemmed Cocktail Glass", "category": "stemmed-glasses", "price": 399, "pack": 1, "size": null, "color_note": "Assorted colours", "description": "Handcrafted borosilicate stemmed cocktail glass with a tulip-shaped bowl, in assorted colours.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-70-1.jpg"]}),
+  P({"id": "kw-71", "sku": "KW-71", "name": "Coloured Cocktail Flute", "category": "stemmed-glasses", "price": 399, "pack": 1, "size": null, "color_note": "Assorted colours", "description": "Handcrafted borosilicate cocktail flute on a ringed coloured stem — a festive glass for champagne, mocktails and cocktails. Assorted colours.", "featured": false, "packing": "Master box packing", "images": ["/products/kw-71-1.jpg"]}),
+  P({"id": "kw-72", "sku": "KW-72", "name": "Silver-Fumed Tall Cocktail Glass", "category": "stemmed-glasses", "price": 399, "pack": 1, "size": null, "color_note": "Single or assorted colours", "description": "Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.", "featured": false, "packing": "Master box packing", "images": ["/products/kw-72-1.jpg"]}),
+  P({"id": "kw-73", "sku": "KW-73", "name": "Flower Embossed Glass Tumbler", "category": "cocktail-tumblers", "price": 399, "pack": 1, "size": null, "color_note": "Assorted colours", "description": "Handcrafted borosilicate cocktail glass with a tiny flower plant rising from the base — a statement glass for drinks and display.", "featured": false, "packing": "Master box packing", "images": ["/products/kw-73-1.jpg"]}),
+  P({"id": "kw-74", "sku": "KW-74", "name": "Citrus Icon Cocktail Tumbler", "category": "cocktail-tumblers", "price": 499, "pack": 1, "size": null, "color_note": "Assorted icons", "description": "Handcrafted borosilicate cocktail glass decorated with hand-applied citrus-slice icons in different assorted designs.", "featured": true, "packing": "Master box packing", "images": ["/products/kw-74-1.jpg"]}),
+  P({"id": "kw-75", "sku": "KW-75", "name": "Embossed Icon Cocktail Tumbler", "category": "cocktail-tumblers", "price": 499, "pack": 1, "size": null, "color_note": "Assorted icons", "description": "Handcrafted borosilicate cocktail glass with hand-applied embossed glass icons in different assorted designs.", "featured": false, "packing": "Master box packing", "images": ["/products/kw-75-1.jpg"]}),
 ]
 
 export const minQty = (p, mode = 'retail') => (mode === 'wholesale' && p.tiers?.length ? p.tiers[0].min : 1)
@@ -120,6 +62,6 @@ export const unitPrice = (p, qty, mode = 'retail') => {
 }
 
 export const unitLabel = (p, mode = 'retail') =>
-  mode === 'wholesale' ? (p.wholesale_unit === 'set' ? 'set' : 'pc') : p.pack > 1 ? `combo of ${p.pack}` : 'pc'
+  mode === 'wholesale' ? (p.wholesale_unit === 'set' ? 'set' : 'pc') : p.pack > 1 ? `pack of ${p.pack}` : 'pc'
 
 export const isIllustration = (src = '') => src.startsWith('/illustrations/')
