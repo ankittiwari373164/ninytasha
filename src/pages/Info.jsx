@@ -29,7 +29,7 @@ export function About() {
   const groups = GROUPS.map((g) => [g, CATEGORIES.filter((c) => c.group === g.slug)])
   return (
     <div className="page">
-      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate temple & pooja items and barware — for homes, temples, hospitality, retail and export.</p></Reveal></div></section>
+      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate temple & pooja items, kitchenware, barware, home décor and gift items — for homes, temples, hospitality, retail and export.</p></Reveal></div></section>
 
       <section className="container section story">
         <Reveal className="story-collage">{['kw-58-1', 'kw-65-1', 'kw-59-1', 'kw-72-1'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}</Reveal>
@@ -37,7 +37,7 @@ export function About() {
           <span className="eyebrow d">Our story</span>
           <h2>Glass, made by hand in Delhi</h2>
           <p>{BRAND.legal} was incorporated in {BRAND.since}. From our factory in SMA Industrial Area on GTK Road, we shape and finish borosilicate glass by hand — a glass prized for its clarity and its resistance to heat and sudden temperature change.</p>
-          <p>Our range covers temple and pooja items — modak glass diyas, akhand jyot, temple bells and pooja gift sets — and handcrafted barware: cocktail glasses, goblets, flutes and tumblers. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
+          <p>Our range covers temple and pooja items, kitchenware, barware (cocktail and wine glasses), home décor, and handicraft and gift items supplied wholesale. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
         </Reveal>
       </section>
 
