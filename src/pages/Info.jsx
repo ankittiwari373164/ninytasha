@@ -7,8 +7,8 @@ import CatIcon from '../components/CatIcon'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
-import { Reveal } from '../components/Layout'
 import { useSeo, breadcrumbs, productLd } from '../lib/seo'
+import { Reveal } from '../components/Layout'
 
 export function BankDetails({ compact }) {
   const { toast } = useStore()
@@ -29,15 +29,15 @@ export function About() {
   const groups = GROUPS.map((g) => [g, CATEGORIES.filter((c) => c.group === g.slug)])
   return (
     <div className="page">
-      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate glassware — kitchenware, barware, crockery, temple items and décor — for homes, hospitality, retail and export.</p></Reveal></div></section>
+      <section className="bulk-hero about"><div className="container"><Reveal><span className="eyebrow">About us · since {BRAND.since}</span><h1>{BRAND.legal}</h1><p>Manufacturers of handcrafted borosilicate temple & pooja items and barware — for homes, temples, hospitality, retail and export.</p></Reveal></div></section>
 
       <section className="container section story">
-        <Reveal className="story-collage">{['modak-diya', 'jug', 'dessert cup', 'champagne'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}</Reveal>
+        <Reveal className="story-collage">{['kw-58-1', 'kw-65-1', 'kw-59-1', 'kw-72-1'].map((k) => <img key={k} src={`/products/${k}.jpg`} alt="True Glass handcrafted borosilicate glass" loading="lazy" />)}</Reveal>
         <Reveal className="story-text" delay={0.1}>
           <span className="eyebrow d">Our story</span>
           <h2>Glass, made by hand in Delhi</h2>
           <p>{BRAND.legal} was incorporated in {BRAND.since}. From our factory in SMA Industrial Area on GTK Road, we shape and finish borosilicate glass by hand — a glass prized for its clarity and its resistance to heat and sudden temperature change.</p>
-          <p>Our {BRAND.productBrand} range spans kitchenware, bar and drinkware, crockery, temple and pooja items, and handicraft décor. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
+          <p>Our range covers temple and pooja items — modak glass diyas, akhand jyot, temple bells and pooja gift sets — and handcrafted barware: cocktail glasses, goblets, flutes and tumblers. We supply households directly and work with retailers, distributors, hotels, restaurants and corporate buyers in bulk.</p>
         </Reveal>
       </section>
 
@@ -84,6 +84,7 @@ export function About() {
 }
 
 export function Contact() {
+  useSeo({ title: 'Contact Us', description: `Contact ${BRAND.legal}: call ${BRAND.phone} / ${BRAND.phone2}, email ${BRAND.email}. Office: ${BRAND.address}.`, path: '/contact', jsonLd: breadcrumbs([['Home', '/'], ['Contact us', '/contact']]) })
   const { toast } = useStore()
   const [f, setF] = useState({ name: '', email: '', phone: '', message: '' })
   const submit = async (e) => { e.preventDefault(); await api.createEnquiry({ type: 'contact', ...f }); toast('Message sent — we’ll reply soon'); setF({ name: '', email: '', phone: '', message: '' }) }
@@ -140,7 +141,7 @@ const FAQS = [
   ]],
   ['Returns & bulk', [
     ['What if my item arrives broken?', 'Share an unboxing photo or video within 48 hours and we’ll send a free replacement.'],
-    ['How does wholesale pricing work?', 'Choose “Wholesale” on any product page. Rates start at 100 pieces and drop further at 500 and 1,000+ pieces.'],
+    ['How do I get wholesale prices?', 'Tap “Get wholesale price” on any product, fill in the quantity and your details, and the form opens WhatsApp with everything filled in. We reply with our wholesale rate. Temple items are packed in 100-piece master boxes.'],
     ['Can I choose colours for a bulk order?', 'Yes — bells and fluted diyas come in Blue, Orange, Pink and Green. Tell us your mix when you order or request a quote.'],
   ]],
 ]
@@ -149,22 +150,12 @@ function FaqItem({ q, a }) {
   return <div className="acc"><button onClick={() => setO(!o)}>{q}<motion.span animate={{ rotate: o ? 180 : 0 }}><ChevronDown size={18} /></motion.span></button><AnimatePresence initial={false}>{o && <motion.div className="acc-body" initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }}><div>{a}</div></motion.div>}</AnimatePresence></div>
 }
 export function FAQ() {
+  useSeo({ title: 'FAQs', description: 'Answers about shipping, borosilicate glass, wholesale pricing, export orders, GST invoices and returns.', path: '/faq', jsonLd: { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: FAQS.flatMap(([, qs]) => qs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))) } })
   return <div className="container page narrow"><h1>Frequently asked questions</h1>{FAQS.map(([h, qs]) => <section key={h} className="faq-sec"><h3>{h}</h3>{qs.map(([q, a]) => <FaqItem key={q} q={q} a={a} />)}</section>)}<p className="muted">Still stuck? <Link to="/contact">Contact us</Link>.</p></div>
 }
 
-const POLICIES = {
-  shipping: ['Shipping policy', [`We ship across India through trusted courier partners. Orders are dispatched within 2–4 business days; bulk orders follow the timeline in your quote.`, `Shipping is free on orders above ${inr(BRAND.freeShippingAbove)}; otherwise a flat fee of ${inr(BRAND.shippingFee)} applies. COD orders carry an additional ${inr(BRAND.codFee)}.`, 'You will receive a tracking link by email and SMS once your order ships.']],
-  returns: ['Returns & refunds', ['Because our products are fragile and handmade, we accept returns only for items damaged in transit or with manufacturing defects.', 'Report damage within 48 hours of delivery with an unboxing photo or video. We will send a free replacement or a full refund to the original payment method within 5–7 business days.', 'Minor bubbles and slight variations in shape are natural in handmade glass and are not considered defects.']],
-  privacy: ['Privacy policy', ['We collect only the information needed to fulfil your order: name, contact details, address and order history.', 'Payments are processed by Razorpay; we never store card details.', 'We never sell your data. You can request deletion of your account at any time by emailing us.']],
-  terms: ['Terms of service', [`This site is operated by ${BRAND.legal}, ${BRAND.address}. GSTIN ${BRAND.gstin}. CIN ${BRAND.cin}.`, 'Retail prices are in INR and include applicable taxes. Wholesale prices are per piece or per set as shown, and exclude GST and shipping.', 'We reserve the right to cancel orders in case of pricing errors or stock unavailability, with a full refund.']],
-}
-export function Policy() {
-  const { slug } = useParams(); const p = POLICIES[slug]
-  if (!p) return <NotFound />
-  return <div className="container page narrow prose"><h1>{p[0]}</h1>{p[1].map((t, i) => <p key={i}>{t}</p>)}<p className="muted small">Last updated: October 2026</p></div>
-}
-
 export function Track() {
+  useSeo({ title: 'Track Your Order', path: '/track' })
   const [no, setNo] = useState(''); const [ph, setPh] = useState(''); const [o, setO] = useState(undefined)
   const steps = ['pending', 'confirmed', 'packed', 'shipped', 'delivered']
   const go = async (e) => { e.preventDefault(); setO((await api.trackOrder(no.trim(), ph.trim())) || null) }
@@ -187,5 +178,6 @@ export function Track() {
 }
 
 export function NotFound() {
+  useSeo({ title: 'Page not found', noindex: true })
   return <div className="container page empty"><h1 className="huge">404</h1><p>This page has burned out.</p><Link to="/" className="btn dark">Back home</Link></div>
 }
