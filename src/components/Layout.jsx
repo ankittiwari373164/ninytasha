@@ -8,7 +8,7 @@ import * as api from '../lib/api'
 import { GROUPS } from '../data/products'
 
 export function AnnouncementBar() {
-  const msgs = ['Free shipping on orders above ₹999', 'Retail & wholesale pricing on every product', 'Call / WhatsApp ' + BRAND.phone]
+  const msgs = ['Free shipping on orders above ₹999', 'Wholesale price on request — tap Get wholesale price', 'Call / WhatsApp ' + BRAND.phone]
   return (
     <div className="announce"><div className="announce-track">{[...msgs, ...msgs].map((m, i) => <span key={i}>✦ {m}</span>)}</div></div>
   )
@@ -25,10 +25,8 @@ export function Navbar() {
         <Link to="/" className="logo">Ninytasha<span>·</span>Exports</Link>
         <nav className="nav-links">
           <NavLink to="/shop">Shop</NavLink>
-          <NavLink to="/shop/temple">Temple</NavLink>
-          <NavLink to="/shop/kitchen">Kitchen</NavLink>
+          <NavLink to="/shop/temple">Temple & Pooja</NavLink>
           <NavLink to="/shop/barware">Barware</NavLink>
-          <NavLink to="/shop/decor">Décor</NavLink>
           <NavLink to="/corporate">Wholesale</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
