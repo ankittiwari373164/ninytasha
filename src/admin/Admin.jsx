@@ -145,7 +145,7 @@ function Orders() {
   )
 }
 
-const EMPTY = { id: '', sku: '', name: '', category: 'diyas', price: 0, mrp: 0, pack: 1, stock: 100, min_qty: 1, size: '', wholesale_unit: 'piece', color_note: '', images: [], colors: [], description: '', active: true, featured: false, tiers: null, rating: 0, reviews: 0 }
+const EMPTY = { id: '', sku: '', name: '', category: 'modak-diyas', price: 0, mrp: 0, pack: 1, stock: 100, min_qty: 1, size: '', wholesale_unit: 'piece', color_note: '', packing: '', images: [], colors: [], description: '', active: true, featured: false, tiers: null, rating: 0, reviews: 0 }
 function Products() {
   const { refreshProducts, toast } = useStore()
   const [list, setList] = useState([]); const [ed, setEd] = useState(null); const [q, setQ] = useState(''); const [busy, setBusy] = useState(false)
@@ -182,6 +182,7 @@ function Products() {
           <label className="lbl">Size<input value={ed.size || ''} onChange={set('size')} placeholder='e.g. 5 inch' /></label>
           <label className="lbl">Wholesale priced per<select value={ed.wholesale_unit || 'piece'} onChange={set('wholesale_unit')}><option value="piece">piece</option><option value="set">set</option></select></label>
           <label className="lbl">Colour note<input value={ed.color_note || ''} onChange={set('color_note')} placeholder="optional" /></label>
+          <label className="lbl">Packing<input value={ed.packing || ''} onChange={set('packing')} placeholder="e.g. 100 pcs master box" /></label>
           <label className="lbl">Colours (comma separated)<input value={(ed.colors || []).join(', ')} onChange={(e) => setEd({ ...ed, colors: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} /></label>
           <label className="lbl span2">Wholesale tiers — min qty : rate : master carton (carton optional), e.g. 100:105:12, 500:95:12, 1000:85:4 — leave empty for retail only
             <input defaultValue={(ed.tiers || []).map((t) => [t.min, t.price, t.carton].filter((x) => x != null && x !== '').join(':')).join(', ')} onChange={(e) => { const t = e.target.value.split(',').map((s) => s.split(':').map((n) => +n.trim())).filter(([a, b]) => a && b).map(([min, price, carton]) => ({ min, price, carton: carton || null })).sort((a, b) => a.min - b.min); setEd((d) => ({ ...d, tiers: t.length ? t : null })) }} /></label>
