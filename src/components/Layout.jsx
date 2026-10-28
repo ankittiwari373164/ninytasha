@@ -26,10 +26,12 @@ export function Navbar() {
         <nav className="nav-links">
           <NavLink to="/shop">Shop</NavLink>
           <NavLink to="/shop/temple">Temple & Pooja</NavLink>
+          <NavLink to="/shop/kitchen">Kitchenware</NavLink>
           <NavLink to="/shop/barware">Barware</NavLink>
+          <NavLink to="/shop/home-decor">Home Décor</NavLink>
+          <NavLink to="/shop/wholesale-various">Handicraft & Gifts</NavLink>
           <NavLink to="/corporate">Wholesale</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+                    <NavLink to="/contact">Contact</NavLink>
         </nav>
         <div className="nav-icons">
           <button className="icon-btn" aria-label="Search" onClick={() => setOpen((o) => !o)}><Search size={20} /></button>
