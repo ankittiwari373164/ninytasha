@@ -3,18 +3,36 @@
 // Used when Supabase isn't configured, and mirrored in supabase/schema.sql.
 const img = (f) => `/products/${f}`
 
+const art = (k) => `/illustrations/${k}.svg` // placeholder art until products are added
+
 export const GROUPS = [
   { slug: 'temple', name: 'Temple & Pooja Items', icon: 'Flame', blurb: 'Modak diyas, akhand jyot, temple bells & pooja sets', image: img('kw-56-1.jpg') },
+  { slug: 'kitchen', name: 'Kitchenware', icon: 'Coffee', blurb: 'Mugs, cups, jars, bottles & jugs', image: art('jugs') },
   { slug: 'barware', name: 'Barware — Cocktail & Wine Glasses', icon: 'Wine', blurb: 'Handcrafted cocktail glasses, goblets & tumblers', image: img('kw-69-1.jpg') },
+  { slug: 'home-decor', name: 'Home Décor', icon: 'Flower2', blurb: 'Candle holders, vases & décor jars', image: art('vases') },
+  { slug: 'wholesale-various', name: 'Wholesale Glass Products — Handicraft & Gift Items', icon: 'Gift', blurb: 'Various handicraft & gift items in bulk', image: art('gift-sets') },
 ]
 
 export const CATEGORIES = [
+  // Temple & Pooja
   { slug: 'modak-diyas', group: 'temple', name: 'Modak Glass Diyas', image: img('kw-50-1.jpg'), blurb: 'Clear & coloured oil diyas' },
   { slug: 'akhand-jyot', group: 'temple', name: 'Akhand Jyot', image: img('kw-62-1.jpg'), blurb: 'Tall & small pooja lamps' },
   { slug: 'temple-bells', group: 'temple', name: 'Temple Bells', image: img('kw-64-1.jpg'), blurb: 'Glass bell with Om' },
   { slug: 'pooja-gift-sets', group: 'temple', name: 'Pooja Gift Sets', image: img('kw-59-1.jpg'), blurb: '3-piece jyot, diya & bell sets' },
+  // Kitchenware
+  { slug: 'mugs-cups', group: 'kitchen', name: 'Mugs & Cups', image: art('mugs-cups'), blurb: 'Tea, coffee & double-wall' },
+  { slug: 'jars', group: 'kitchen', name: 'Storage Jars', image: art('jars'), blurb: 'Kitchen & pantry jars' },
+  { slug: 'water-bottles', group: 'kitchen', name: 'Water Bottles', image: art('water-bottles'), blurb: 'Borosilicate bottles' },
+  { slug: 'jugs', group: 'kitchen', name: 'Jugs & Carafes', image: art('jugs'), blurb: 'Serving jugs & decanters' },
+  // Barware
   { slug: 'stemmed-glasses', group: 'barware', name: 'Stemmed Cocktail & Wine Glasses', image: img('kw-70-1.jpg'), blurb: 'Goblets, martini & flutes' },
   { slug: 'cocktail-tumblers', group: 'barware', name: 'Cocktail Tumblers', image: img('kw-66-1.jpg'), blurb: 'Fumed, flower & icon tumblers' },
+  // Home Décor
+  { slug: 'candle-holders', group: 'home-decor', name: 'Candle Stands & Holders', image: art('candle-stands'), blurb: 'Tealight & pillar holders' },
+  { slug: 'vases', group: 'home-decor', name: 'Vases & Décor Jars', image: art('vases'), blurb: 'Flower vases & zars' },
+  // Wholesale glass products — various
+  { slug: 'handicraft-items', group: 'wholesale-various', name: 'Handicraft Items', image: art('candle-stands'), blurb: 'Handcrafted glass pieces' },
+  { slug: 'gift-items', group: 'wholesale-various', name: 'Gift Items', image: art('gift-sets'), blurb: 'Festive & corporate gifts' },
 ]
 
 export const groupOf = (catSlug) => CATEGORIES.find((c) => c.slug === catSlug)?.group
