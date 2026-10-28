@@ -3,8 +3,8 @@ import { BRAND } from './config'
 
 // Public site URL — set VITE_SITE_URL in Vercel when you add a custom domain
 export const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://ninytashaexportspvtltd.vercel.app').replace(/\/$/, '')
-const DEFAULT_IMAGE = '/products/trio-set.jpg'
-const DEFAULT_DESC = `${BRAND.legal} — manufacturer of handcrafted borosilicate glassware since ${BRAND.since}: kitchenware, wine & cocktail glasses, crockery, diyas, temple bells and décor. Retail, wholesale & export from Delhi.`
+const DEFAULT_IMAGE = '/products/kw-56-1.jpg'
+const DEFAULT_DESC = `${BRAND.legal} — manufacturer of handcrafted borosilicate glassware since ${BRAND.since}: glass oil diyas, akhand jyot, temple bells, pooja gift sets and handcrafted cocktail & wine glasses. Retail, wholesale & export from Delhi.`
 
 const abs = (u) => (u?.startsWith('http') ? u : SITE_URL + (u || ''))
 
