@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Minus, Plus, Star, Truck, RotateCcw, ShieldCheck, ChevronDown, Share2, Gem, Flame, Sparkles, Hand, Phone, MessageCircle } from 'lucide-react'
 import { useStore } from '../context/Store'
+import WholesaleButton from '../components/WholesaleEnquiry'
 import { unitPrice, minQty, unitLabel, COLOR_HEX, isIllustration } from '../data/products'
 import { inr, BRAND } from '../lib/config'
 import * as api from '../lib/api'
@@ -114,8 +115,10 @@ export default function Product() {
           </AnimatePresence>
 
           <div className="specs">
+            {p.packing && <div><span>Packing</span><b>{p.packing}</b></div>}
+            {!p.colors?.length && p.color_note && <div><span>Colour</span><b>{p.color_note}</b></div>}
             {p.size && <div><span>Size</span><b>{p.size}</b></div>}
-            {p.pack > 1 && <div><span>Pieces</span><b>{p.pack} in combo</b></div>}
+            {p.pack > 1 && <div><span>Pieces</span><b>{p.pack} in pack</b></div>}
           </div>
 
           {p.colors?.length > 0 && (
@@ -130,6 +133,8 @@ export default function Product() {
             <button className={'icon-btn box ' + (wish.includes(p.id) ? 'on' : '')} onClick={() => toggleWish(p.id)} aria-label="Save"><Heart size={20} fill={wish.includes(p.id) ? 'currentColor' : 'none'} /></button>
           </div>
           <button className="btn gold full" onClick={() => { add(); nav('/checkout') }}>Buy now</button>
+          <WholesaleButton product={p} />
+          <p className="muted small center ws-sub">Buying in bulk for your shop or business? Get our wholesale rate on WhatsApp.</p>
 
           <div className="contact-strip">
             <a href={`tel:+91${BRAND.phone}`}><Phone size={16} /> {BRAND.phone}</a>
