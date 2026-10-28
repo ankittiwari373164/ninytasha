@@ -1,6 +1,6 @@
 -- =====================================================================
 -- R3 Exports store — Supabase schema
--- Run once in Supabase → SQL Editor → New query → Run.
+-- Run in Supabase → SQL Editor → New query → Run. Safe to run again.
 -- =====================================================================
 
 -- ---------- profiles ----------
@@ -42,6 +42,7 @@ create table if not exists public.products (
   tiers jsonb,                -- wholesale: [{ "min": 100, "price": 105, "carton": 12 }, ...]
   wholesale_unit text default 'piece',   -- wholesale rate is per 'piece' or per 'set'
   color_note text,
+  packing text,                -- e.g. '100 pcs master box'
   images text[] default '{}',
   colors text[] default '{}',
   description text,
@@ -56,6 +57,7 @@ create table if not exists public.products (
 alter table public.products add column if not exists size text;
 alter table public.products add column if not exists wholesale_unit text default 'piece';
 alter table public.products add column if not exists color_note text;
+alter table public.products add column if not exists packing text;
 
 -- ---------- orders ----------
 create table if not exists public.orders (
@@ -132,49 +134,92 @@ alter table public.coupons enable row level security;
 alter table public.reviews enable row level security;
 alter table public.subscribers enable row level security;
 
+drop policy if exists "own profile" on public.profiles;
 create policy "own profile" on public.profiles for select using (id = auth.uid() or public.is_admin());
+drop policy if exists "admin profiles" on public.profiles;
+drop policy if exists "edit own profile" on public.profiles;
 create policy "edit own profile" on public.profiles for update using (id = auth.uid());
 
+drop policy if exists "read active products" on public.products;
 create policy "read active products" on public.products for select using (active or public.is_admin());
+drop policy if exists "admin products" on public.products;
 create policy "admin products" on public.products for all using (public.is_admin()) with check (public.is_admin());
 
+drop policy if exists "place order" on public.orders;
 create policy "place order" on public.orders for insert with check (payment_status = 'pending' and status = 'pending');
+drop policy if exists "read own orders" on public.orders;
 create policy "read own orders" on public.orders for select using (public.is_admin() or email = auth.email() or user_id = auth.uid());
+drop policy if exists "admin update orders" on public.orders;
 create policy "admin update orders" on public.orders for update using (public.is_admin());
 
+drop policy if exists "send enquiry" on public.enquiries;
 create policy "send enquiry" on public.enquiries for insert with check (true);
+drop policy if exists "admin enquiries" on public.enquiries;
 create policy "admin enquiries" on public.enquiries for all using (public.is_admin());
 
+drop policy if exists "read active coupons" on public.coupons;
 create policy "read active coupons" on public.coupons for select using (active or public.is_admin());
+drop policy if exists "admin coupons" on public.coupons;
 create policy "admin coupons" on public.coupons for all using (public.is_admin()) with check (public.is_admin());
 
+drop policy if exists "read approved reviews" on public.reviews;
 create policy "read approved reviews" on public.reviews for select using (approved or public.is_admin());
+drop policy if exists "write review" on public.reviews;
 create policy "write review" on public.reviews for insert with check (approved = false);
+drop policy if exists "admin reviews" on public.reviews;
 create policy "admin reviews" on public.reviews for all using (public.is_admin());
 
+drop policy if exists "subscribe" on public.subscribers;
 create policy "subscribe" on public.subscribers for insert with check (true);
+drop policy if exists "admin subscribers" on public.subscribers;
 create policy "admin subscribers" on public.subscribers for select using (public.is_admin());
 
 
 -- ---------- storage for product images ----------
 insert into storage.buckets (id, name, public) values ('product-images', 'product-images', true) on conflict do nothing;
+drop policy if exists "public read images" on storage.objects;
 create policy "public read images" on storage.objects for select using (bucket_id = 'product-images');
+drop policy if exists "admin upload images" on storage.objects;
 create policy "admin upload images" on storage.objects for insert with check (bucket_id = 'product-images' and public.is_admin());
+drop policy if exists "admin delete images" on storage.objects;
 create policy "admin delete images" on storage.objects for delete using (bucket_id = 'product-images' and public.is_admin());
 
 -- ---------- seed data ----------
 insert into public.coupons (code, type, value, min_order) values ('DIWALI10', 'percent', 10, 499) on conflict do nothing;
 
--- remove the products from the first version of the site
-delete from public.products where id in ('kw-51','kw-52','kw-53','kw-54','kw-55','kw-56','kw-57','kw-58','kw-59','kw-60','kw-61','kw-62','kw-63','r3b01','r3d01','r3md01','r3bd01','r3bmd01','r3com01');
+-- Catalogue: only the products from the retail price album (KW-50 … KW-75).
+-- This removes every other product. Products you add later in Admin → Products
+-- will also be removed if you re-run this file — re-run it only to reset the catalogue.
+delete from public.products where id not in ('kw-50', 'kw-51', 'kw-52', 'kw-53', 'kw-54', 'kw-55', 'kw-56', 'kw-57', 'kw-58', 'kw-59', 'kw-60', 'kw-61', 'kw-62', 'kw-63', 'kw-64', 'kw-65', 'kw-66', 'kw-67', 'kw-68', 'kw-69', 'kw-70', 'kw-71', 'kw-72', 'kw-73', 'kw-74', 'kw-75');
 
-insert into public.products (id, sku, name, category, price, mrp, pack, size, stock, min_qty, tiers, wholesale_unit, images, colors, color_note, description, featured, active, rating, reviews) values
-  ('kw-50', 'KW-50', 'Modak Diya Oil Lamp & Tealight', 'diyas', 149, 0, 1, '4 inch', 500, 1, '[{"min":100,"price":105,"carton":null},{"min":500,"price":95,"carton":null},{"min":1000,"price":85,"carton":null}]'::jsonb, 'piece', array['/products/modak-diya.jpg','/products/modak-diya-poster.jpg']::text[], array['Clear']::text[], null, 'A distinctive ribbed glass diya inspired by the traditional Modak form, designed for oil or tealight use. Hand-finished in premium borosilicate glass — the ribs catch and multiply the glow of the flame.', true, true, 0, 0),
-  ('kw-65', 'KW-65', 'Bell & Diya Set', 'gift-sets', 349, 0, 2, 'Bell 5" + Diya 3"', 500, 1, '[{"min":100,"price":190,"carton":null},{"min":500,"price":155,"carton":null},{"min":1000,"price":140,"carton":null}]'::jsonb, 'set', array['/products/bell-diya-set.jpg','/products/bell-diya-set-poster.jpg']::text[], array['Blue','Orange','Pink','Green']::text[], null, 'A handcrafted Crystal Bell paired with a fluted glass Diya — an elegant festive gifting combination. Perfect for Diwali, pooja and client gifting.', true, true, 0, 0),
-  ('kw-64', 'KW-64', 'Crystal Bell', 'bells', 199, 0, 1, '5 inch', 500, 1, '[{"min":100,"price":105,"carton":12},{"min":500,"price":95,"carton":12},{"min":1000,"price":85,"carton":4}]'::jsonb, 'piece', array['/products/crystal-bell.jpg','/products/crystal-bell-poster.jpg']::text[], array['Blue','Orange','Pink','Green']::text[], null, 'A hand-finished borosilicate glass bell with a hexagonal base, Om motif and a jewel-toned finial. Available in four colourways.', true, true, 0, 0),
-  ('kw-64-4', 'KW-64-4', 'Diya Oil Lamp & Tealight — Combo of 4', 'diyas', 799, 0, 4, '3 inch', 500, 1, '[{"min":100,"price":105,"carton":12},{"min":500,"price":95,"carton":12},{"min":1000,"price":85,"carton":4}]'::jsonb, 'piece', array['/products/diya-combo-4.jpg','/products/diya-combo-4-poster.jpg']::text[], array['Blue','Orange','Pink','Green']::text[], 'Combo includes one of each colour', 'A fluted glass diya that works equally well with oil or a tealight, its ridged base catching the flame’s glow. This combo brings all four colours together.', true, true, 0, 0),
-  ('kw-66', 'KW-66', 'Bell, Modak Diya & Diya Trio', 'gift-sets', 1499, 0, 3, 'Bell 5" + Diya 3" + Modak Diya 4"', 500, 1, '[{"min":100,"price":290,"carton":null},{"min":500,"price":270,"carton":null},{"min":1000,"price":250,"carton":null}]'::jsonb, 'set', array['/products/trio-set.jpg','/products/trio-set-poster.jpg']::text[], array['Blue','Orange','Pink','Green']::text[], 'Colour applies to the bell · Modak Diya is clear', 'The full collection in one set — bell, diya and modak diya together. The flagship option for premium festive and client gifting.', true, true, 0, 0)
-on conflict (id) do update set sku = excluded.sku, name = excluded.name, category = excluded.category, price = excluded.price, mrp = excluded.mrp, pack = excluded.pack, size = excluded.size, min_qty = excluded.min_qty, tiers = excluded.tiers, wholesale_unit = excluded.wholesale_unit, images = excluded.images, colors = excluded.colors, color_note = excluded.color_note, description = excluded.description, featured = excluded.featured, active = excluded.active;
+insert into public.products (id, sku, name, category, price, mrp, pack, size, packing, stock, min_qty, tiers, wholesale_unit, images, colors, color_note, description, featured, active, rating, reviews) values
+  ('kw-50', 'KW-50', 'Modak Glass Oil Diya — Clear', 'modak-diyas', 129, 0, 1, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-50-1.jpg','/products/kw-50-2.jpg']::text[], array[]::text[], null, 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', true, true, 0, 0),
+  ('kw-51', 'KW-51', 'Modak Glass Oil Diya — Clear, Pack of 2', 'modak-diyas', 199, 0, 2, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-51-1.jpg','/products/kw-51-2.jpg']::text[], array[]::text[], null, 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', false, true, 0, 0),
+  ('kw-52', 'KW-52', 'Modak Glass Oil Diya — Clear, Pack of 4', 'modak-diyas', 350, 0, 4, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-52-1.jpg']::text[], array[]::text[], null, 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', true, true, 0, 0),
+  ('kw-53', 'KW-53', 'Modak Glass Oil Diya — Clear, Pack of 6', 'modak-diyas', 499, 0, 6, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-53-1.jpg','/products/kw-53-2.jpg']::text[], array[]::text[], null, 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', false, true, 0, 0),
+  ('kw-54', 'KW-54', 'Coloured Modak Glass Oil Diya', 'modak-diyas', 99, 0, 1, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-54-1.jpg']::text[], array[]::text[], 'Colour as shown / assorted', 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', true, true, 0, 0),
+  ('kw-55', 'KW-55', 'Coloured Modak Glass Oil Diya — Pack of 2', 'modak-diyas', 199, 0, 2, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-55-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', false, true, 0, 0),
+  ('kw-56', 'KW-56', 'Coloured Modak Glass Oil Diya — Pack of 4', 'modak-diyas', 550, 0, 4, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-56-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', true, true, 0, 0),
+  ('kw-57', 'KW-57', 'Coloured Modak Glass Oil Diya — Pack of 6', 'modak-diyas', 499, 0, 6, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-57-1.jpg','/products/kw-57-2.jpg','/products/kw-57-3.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted modak-shaped oil diya in heat-resistant borosilicate glass — a premium oil lamp for Diwali, pooja and home décor. The ribbed body refracts the flame beautifully. Use with lamp oil and a cotton wick.', false, true, 0, 0),
+  ('kw-58', 'KW-58', 'Tall Akhand Jyot Aarti Diya — Large', 'akhand-jyot', 250, 0, 1, 'Large', '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-58-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'Handcrafted borosilicate akhand jyot — a tall aarti glass diya with a multi-wick clear bowl on a tiered glass stem. A traditional oil lamp for pooja, Diwali, mandir and spiritual gifting.', true, true, 0, 0),
+  ('kw-59', 'KW-59', 'Akhand Jyot, Small Diya & Bell — 3-Piece Pooja Set', 'pooja-gift-sets', 499, 0, 3, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-59-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'A three-piece pooja gift set: a handcrafted glass akhand jyot with a clear bowl on an amber base, a small akhand jyot and a glass temple bell.', true, true, 0, 0),
+  ('kw-60', 'KW-60', '3-Piece Pooja Gift Set with Box', 'pooja-gift-sets', 699, 0, 3, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-60-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'The three-piece akhand jyot, small diya and glass bell set, presented in a gift box — ready for Diwali and festive gifting.', true, true, 0, 0),
+  ('kw-61', 'KW-61', 'Small Akhand Jyot', 'akhand-jyot', 150, 0, 1, 'Small', '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-61-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.', true, true, 0, 0),
+  ('kw-62', 'KW-62', 'Small Akhand Jyot — Pack of 2', 'akhand-jyot', 299, 0, 2, 'Small', '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-62-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.', false, true, 0, 0),
+  ('kw-63', 'KW-63', 'Small Akhand Jyot — Pack of 4', 'akhand-jyot', 599, 0, 4, 'Small', '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-63-1.jpg']::text[], array[]::text[], 'Available in six assorted colours', 'Handcrafted glass table diya (akhand jyot) with a clear bowl on a ribbed base — a traditional oil lamp for pooja, Diwali, mandir, festive home décor and spiritual gifting.', false, true, 0, 0),
+  ('kw-64', 'KW-64', 'Glass Temple Bell with Om', 'temple-bells', 150, 0, 1, null, '100 pcs master box', 500, 1, null, 'piece', array['/products/kw-64-1.jpg']::text[], array[]::text[], null, 'Handcrafted glass temple bell with an Om motif in amber colour, a twisted glass stem and a red finial — a decorative pooja bell for your mandir.', true, true, 0, 0),
+  ('kw-65', 'KW-65', 'Silver-Fumed Goblet Cocktail Glass', 'stemmed-glasses', 699, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-65-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.', true, true, 0, 0),
+  ('kw-66', 'KW-66', 'Silver-Fumed Cocktail Tumbler', 'cocktail-tumblers', 399, 0, 1, '4.5 inch', 'Master box packing', 500, 1, null, 'piece', array['/products/kw-66-1.jpg']::text[], array[]::text[], 'Single or assorted colours', 'Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.', true, true, 0, 0),
+  ('kw-67', 'KW-67', 'Flower Plant Cocktail Tumbler', 'cocktail-tumblers', 399, 0, 1, '4.5 inch', 'Master box packing', 500, 1, null, 'piece', array['/products/kw-67-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted borosilicate cocktail glass with a tiny embossed flower-plant design — a cheerful glass for cocktails, juices and iced drinks.', true, true, 0, 0),
+  ('kw-68', 'KW-68', 'Ribbed Martini Cocktail Glass', 'stemmed-glasses', 299, 0, 1, '8 inch', 'Master box packing', 500, 1, null, 'piece', array['/products/kw-68-1.jpg']::text[], array[]::text[], 'Transparent', 'Handcrafted borosilicate martini-style cocktail glass with a ribbed bowl on a slender stem. Clear, transparent glass.', true, true, 0, 0),
+  ('kw-69', 'KW-69', 'Silver-Fumed Stemmed Goblet', 'stemmed-glasses', 399, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-69-1.jpg']::text[], array[]::text[], 'Single or assorted colours', 'Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.', false, true, 0, 0),
+  ('kw-70', 'KW-70', 'Coloured Stemmed Cocktail Glass', 'stemmed-glasses', 399, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-70-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted borosilicate stemmed cocktail glass with a tulip-shaped bowl, in assorted colours.', true, true, 0, 0),
+  ('kw-71', 'KW-71', 'Coloured Cocktail Flute', 'stemmed-glasses', 399, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-71-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted borosilicate cocktail flute on a ringed coloured stem — a festive glass for champagne, mocktails and cocktails. Assorted colours.', false, true, 0, 0),
+  ('kw-72', 'KW-72', 'Silver-Fumed Tall Cocktail Glass', 'stemmed-glasses', 399, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-72-1.jpg']::text[], array[]::text[], 'Single or assorted colours', 'Handcrafted borosilicate cocktail glass with a silver-fumed textured design. Available in single or assorted colours, in single or double-piece packing.', false, true, 0, 0),
+  ('kw-73', 'KW-73', 'Flower Embossed Glass Tumbler', 'cocktail-tumblers', 399, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-73-1.jpg']::text[], array[]::text[], 'Assorted colours', 'Handcrafted borosilicate cocktail glass with a tiny flower plant rising from the base — a statement glass for drinks and display.', false, true, 0, 0),
+  ('kw-74', 'KW-74', 'Citrus Icon Cocktail Tumbler', 'cocktail-tumblers', 499, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-74-1.jpg']::text[], array[]::text[], 'Assorted icons', 'Handcrafted borosilicate cocktail glass decorated with hand-applied citrus-slice icons in different assorted designs.', true, true, 0, 0),
+  ('kw-75', 'KW-75', 'Embossed Icon Cocktail Tumbler', 'cocktail-tumblers', 499, 0, 1, null, 'Master box packing', 500, 1, null, 'piece', array['/products/kw-75-1.jpg']::text[], array[]::text[], 'Assorted icons', 'Handcrafted borosilicate cocktail glass with hand-applied embossed glass icons in different assorted designs.', false, true, 0, 0)
+on conflict (id) do update set sku = excluded.sku, name = excluded.name, category = excluded.category, price = excluded.price, mrp = excluded.mrp, pack = excluded.pack, size = excluded.size, packing = excluded.packing, min_qty = excluded.min_qty, tiers = excluded.tiers, wholesale_unit = excluded.wholesale_unit, images = excluded.images, colors = excluded.colors, color_note = excluded.color_note, description = excluded.description, featured = excluded.featured, active = excluded.active;
 
 -- ---------- admin login ----------
 -- Admin credentials live in Supabase secrets, not in this database:
