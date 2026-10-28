@@ -37,7 +37,7 @@ export default function Home() {
           <div className="hero-content">
             <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>Borosilicate glass manufacturer · since {BRAND.since}</motion.span>
             <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>Handcrafted glass<br /><em>for every table.</em></motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Glass oil diyas, akhand jyot, temple bells and handcrafted cocktail & wine glasses — made by hand in our Delhi factory. Buy online at retail price, or get our wholesale rate on WhatsApp.</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>Temple & pooja items, kitchenware, cocktail & wine glasses, home décor and handicraft gift items — made by hand in our Delhi factory. Buy online at retail price, or get our wholesale rate on WhatsApp.</motion.p>
             <motion.div className="hero-cta" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
               <Link to="/shop" className="btn gold">Explore products <ArrowRight size={18} /></Link>
               <Link to="/corporate" className="btn ghost-l">Wholesale & export</Link>
