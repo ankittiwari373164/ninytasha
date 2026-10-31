@@ -158,7 +158,7 @@ export function Track() {
   useSeo({ title: 'Track Your Order', path: '/track' })
   const [no, setNo] = useState(''); const [ph, setPh] = useState(''); const [o, setO] = useState(undefined)
   const steps = ['pending', 'confirmed', 'packed', 'shipped', 'delivered']
-  const go = async (e) => { e.preventDefault(); setO((await api.trackOrder(no.trim(), ph.trim())) || null) }
+  const go = async (e) => { e.preventDefault(); const r = await api.trackOrder(no.trim(), ph.trim()); setO(r ? { ...r, events: r.events || r.tracking_events || [] } : null) }
   return (
     <div className="container page narrow">
       <h1>Track your order</h1>
@@ -170,7 +170,19 @@ export function Track() {
           {o.status === 'cancelled' ? <p className="err">This order was cancelled.</p> : (
             <div className="timeline">{steps.map((s, i) => <div key={s} className={steps.indexOf(o.status) >= i ? 'on' : ''}><span />{s}</div>)}</div>
           )}
-          {o.tracking && <p>Courier tracking: <b>{o.tracking}</b></p>}
+          {(o.awb || o.courier || o.etd) && (
+            <div className="track-meta">
+              {o.courier && <span>Courier: <b>{o.courier}</b></span>}
+              {o.awb && <span>AWB: <b>{o.awb}</b></span>}
+              {o.etd && <span>Expected: <b>{new Date(String(o.etd).replace(' ', 'T')).toLocaleDateString('en-IN', { dateStyle: 'medium' })}</b></span>}
+              {o.shipping_status && !String(o.shipping_status).startsWith('ERROR') && <span>Status: <b>{o.shipping_status}</b></span>}
+            </div>
+          )}
+          {!o.awb && o.tracking && <p>Courier tracking: <b>{o.tracking}</b></p>}
+          {o.events?.length > 0 && (
+            <ul className="events">{o.events.map((ev, i) => <li key={i}><b>{ev.status || ev.activity}</b>{ev.activity && ev.status && ev.activity !== ev.status && <> — {ev.activity}</>}<small>{[ev.location, ev.date].filter(Boolean).join(' · ')}</small></li>)}</ul>
+          )}
+          {o.tracking_url && <a className="btn outline sm" style={{ marginTop: 16 }} href={o.tracking_url} target="_blank" rel="noreferrer">Open courier tracking page</a>}
         </motion.div>
       )}
     </div>
