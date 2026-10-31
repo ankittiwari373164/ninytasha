@@ -71,8 +71,32 @@ export async function listOrders({ email } = {}) {
   return must(await q)
 }
 export async function trackOrder(orderNo, phone) {
-  if (!supabase) return L.get('orders', []).find((o) => o.order_no === orderNo && o.phone === phone)
+  if (!supabase) return L.get('orders', []).find((o) => o.order_no === orderNo && o.phone.replace(/\D/g, '').slice(-10) === phone.replace(/\D/g, '').slice(-10))
+  // Live courier tracking via Shiprocket; falls back to the saved status if Shiprocket isn't set up
+  try { return await callFn('shiprocket', { action: 'track', order_no: orderNo, phone }) } catch (e) {
+    if (/No order found/.test(e.message)) return null
+  }
   return must(await supabase.rpc('track_order', { p_order_no: orderNo, p_phone: phone }))?.[0]
+}
+
+// ---------- edge functions ----------
+export async function callFn(name, body) {
+  if (!supabase) throw new Error('Available once Supabase is connected')
+  const { data, error } = await supabase.functions.invoke(name, { body })
+  if (error) {
+    let msg = error.message || 'Request failed'
+    try { msg = (await error.context.json()).error || msg } catch {}
+    throw new Error(msg)
+  }
+  if (data?.error) throw new Error(data.error)
+  return data
+}
+/** Admin shipping actions: create | ship | label | sync | cancel */
+export const shiprocket = (action, orderId, extra = {}) => callFn('shiprocket', { action, order_id: orderId, ...extra })
+/** Delivery check for a PIN code → { serviceable, days, cod } or null if unavailable */
+export async function checkPincode(pincode, weight) {
+  if (!supabase || !/^\d{6}$/.test(pincode)) return null
+  try { return await callFn('shiprocket', { action: 'serviceability', pincode, weight }) } catch { return null }
 }
 export async function updateOrder(id, patch) {
   if (!supabase) return L.set('orders', L.get('orders', []).map((o) => (o.id === id ? { ...o, ...patch } : o)))
