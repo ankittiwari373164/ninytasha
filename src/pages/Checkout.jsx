@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { CreditCard, Banknote, FileText, Tag, Lock } from 'lucide-react'
+import { CreditCard, Banknote, FileText, Tag, Lock, Truck, AlertTriangle, Loader2 } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { BRAND, inr } from '../lib/config'
 import * as api from '../lib/api'
@@ -23,6 +23,20 @@ export default function Checkout() {
   const [code, setCode] = useState(''); const [coupon, setCoupon] = useState(null)
   const [busy, setBusy] = useState(false)
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
+  const [pin, setPin] = useState(null) // Shiprocket delivery check: { serviceable, days, cod } | { loading: true } | null
+
+  // Check delivery to this PIN code (live only, once Shiprocket is set up)
+  const estWeight = lines.reduce((w, l) => w + 0.35 * Math.max(1, l.product.pack || 1) * l.qty, 0)
+  useEffect(() => {
+    if (!/^\d{6}$/.test(f.pincode)) { setPin(null); return }
+    let alive = true
+    setPin({ loading: true })
+    api.checkPincode(f.pincode, Math.max(0.5, Math.round(estWeight * 10) / 10)).then((r) => alive && setPin(r))
+    return () => { alive = false }
+  }, [f.pincode]) // eslint-disable-line react-hooks/exhaustive-deps
+  const noDelivery = pin && pin.serviceable === false
+  const noCod = pin && pin.serviceable && pin.cod === false
+  useEffect(() => { if (noCod && method === 'cod') setMethod('razorpay') }, [noCod, method])
 
   if (!lines.length) return <div className="container page empty"><h2>Nothing to check out</h2><Link className="btn dark" to="/shop">Shop now</Link></div>
 
@@ -42,7 +56,9 @@ export default function Checkout() {
   const base = () => ({ ...f, items, subtotal, discount, shipping: shipping + codFee, total, coupon: coupon?.code || null, user_id: user?.id || null })
 
   const place = async (e) => {
-    e.preventDefault(); setBusy(true)
+    e.preventDefault()
+    if (noDelivery && method !== 'quote') return toast('Sorry, we can’t deliver to this PIN code yet — choose “Request a quote” or contact us')
+    setBusy(true)
     try {
       if (method === 'quote') {
         await api.createEnquiry({ type: 'quote', name: f.name, email: f.email, phone: f.phone, company: f.company, message: `${f.notes}\n\nAddress: ${f.address}, ${f.city}, ${f.state} ${f.pincode}\nGST: ${f.gst}`, items, estimate: total })
@@ -59,19 +75,28 @@ export default function Checkout() {
       const o = await api.createOrder({ ...base(), payment_method: 'razorpay', payment_status: 'pending', status: 'pending' })
       let rzpOrderId, amount = total * 100
       if (api.isLive) {
-        const { data, error } = await api.supabase.functions.invoke('razorpay', { body: { action: 'create', order_id: o.id } })
-        if (error) throw error; rzpOrderId = data.id; amount = data.amount
+        const data = await api.callFn('razorpay', { action: 'create', order_id: o.id }) // server recalculates the price
+        rzpOrderId = data.id; amount = data.amount
       }
-      new window.Razorpay({
+      const rzp = new window.Razorpay({
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, amount, currency: 'INR', name: BRAND.name, description: `Order ${o.order_no}`, order_id: rzpOrderId,
-        prefill: { name: f.name, email: f.email, contact: f.phone }, theme: { color: '#b8862f' },
+        image: '/icon-192.png',
+        prefill: { name: f.name, email: f.email, contact: f.phone.replace(/\D/g, '').slice(-10) },
+        notes: { order_no: o.order_no }, theme: { color: '#b8862f' },
         handler: async (resp) => {
-          if (api.isLive) await api.supabase.functions.invoke('razorpay', { body: { action: 'verify', order_id: o.id, ...resp } })
-          else await api.updateOrder(o.id, { payment_status: 'paid', status: 'confirmed', payment_ref: resp.razorpay_payment_id })
+          try {
+            if (api.isLive) await api.callFn('razorpay', { action: 'verify', order_id: o.id, ...resp })
+            else await api.updateOrder(o.id, { payment_status: 'paid', status: 'confirmed', payment_ref: resp.razorpay_payment_id })
+          } catch {
+            // The Razorpay webhook will still confirm a genuine payment within a few minutes
+            toast('Payment received — confirming it with the bank. You’ll see it on your order shortly.')
+          }
           clearCart(); nav('/order/' + o.order_no)
         },
-        modal: { ondismiss: () => { setBusy(false); toast('Payment cancelled — your order is saved as pending') } },
-      }).open()
+        modal: { ondismiss: () => { setBusy(false); toast('Payment cancelled — you can try again') } },
+      })
+      rzp.on('payment.failed', (r) => { setBusy(false); toast('Payment failed: ' + (r?.error?.description || 'please try another method')) })
+      rzp.open()
     } catch (er) { toast(er.message || 'Something went wrong'); setBusy(false) }
   }
 
@@ -100,7 +125,12 @@ export default function Checkout() {
               <input required placeholder="House, street, area" value={f.address} onChange={set('address')} className="span2" />
               <input required placeholder="City" value={f.city} onChange={set('city')} />
               <input required placeholder="State" value={f.state} onChange={set('state')} />
-              <input required pattern="[0-9]{6}" placeholder="PIN code" value={f.pincode} onChange={set('pincode')} />
+              <div className="pin-field">
+                <input required pattern="[0-9]{6}" inputMode="numeric" maxLength={6} placeholder="PIN code" value={f.pincode} onChange={(e) => setF({ ...f, pincode: e.target.value.replace(/\D/g, '') })} />
+                {pin?.loading && <span className="pin-msg"><Loader2 size={14} className="spin" /> Checking delivery…</span>}
+                {pin && pin.serviceable && <span className="pin-msg ok"><Truck size={14} /> Delivers{pin.days ? ` in about ${pin.days} day${pin.days > 1 ? 's' : ''}` : ''}{pin.cod ? ' · COD available' : ' · prepaid only'}</span>}
+                {noDelivery && <span className="pin-msg bad"><AlertTriangle size={14} /> Not deliverable to this PIN yet — request a quote</span>}
+              </div>
               <input placeholder="Company (optional)" value={f.company} onChange={set('company')} />
               <input placeholder="GSTIN (optional)" value={f.gst} onChange={set('gst')} className="span2" />
               <textarea placeholder="Order notes, gift message, branding needs…" value={f.notes} onChange={set('notes')} className="span2" rows={2} />
@@ -110,9 +140,9 @@ export default function Checkout() {
             <h3>Payment</h3>
             <div className="methods">
               {methods.map(([v, I, t, d]) => (
-                <label key={v} className={'method ' + (method === v ? 'on' : '')}>
-                  <input type="radio" name="m" checked={method === v} onChange={() => setMethod(v)} />
-                  <I size={22} /><div><b>{t}</b><span>{d}</span></div>
+                <label key={v} className={'method ' + (method === v ? 'on' : '') + (v === 'cod' && noCod ? ' disabled' : '')}>
+                  <input type="radio" name="m" checked={method === v} disabled={v === 'cod' && noCod} onChange={() => setMethod(v)} />
+                  <I size={22} /><div><b>{t}</b><span>{v === 'cod' && noCod ? 'Not available for this PIN code' : d}</span></div>
                   {method === v && <motion.span layoutId="m-ring" className="m-ring" />}
                 </label>
               ))}
