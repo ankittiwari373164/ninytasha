@@ -64,6 +64,7 @@ export default function Account() {
             <div className="oc-head"><b>#{o.order_no}</b><span className={'pill ' + o.status}>{o.status}</span></div>
             <p className="muted small">{new Date(o.created_at).toLocaleDateString('en-IN', { dateStyle: 'medium' })} · {o.items.length} items · {inr(o.total)} · {o.payment_method.toUpperCase()}</p>
             <div className="progress">{STATUS.map((s, i) => <span key={s} className={STATUS.indexOf(o.status) >= i ? 'on' : ''} />)}</div>
+            {o.tracking_url && <a className="link small" href={o.tracking_url} target="_blank" rel="noreferrer">Track parcel{o.courier ? ` · ${o.courier}` : ''} →</a>}
             <div className="oc-imgs">{o.items.slice(0, 4).map((i, k) => <img key={k} src={i.image} alt="" />)}</div>
           </div>
         ))}
