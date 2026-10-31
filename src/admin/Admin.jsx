@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Routes, Route, NavLink, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LayoutDashboard, Package, ShoppingCart, Users, MessageSquare, Tag, Mail, LogOut, Plus, Pencil, Trash2, X, Upload, Search, Printer, ExternalLink, TrendingUp, IndianRupee, Clock } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, MessageSquare, Tag, Mail, LogOut, Plus, Pencil, Trash2, X, Upload, Search, Printer, ExternalLink, TrendingUp, IndianRupee, Clock, Truck, Send, FileDown, RefreshCw, XCircle, Loader2 } from 'lucide-react'
 import { useStore } from '../context/Store'
 import { inr, BRAND } from '../lib/config'
 import { CATEGORIES, GROUPS } from '../data/products'
@@ -104,6 +104,50 @@ function Dashboard() {
   )
 }
 
+function ShipPanel({ order, onChange }) {
+  const { toast } = useStore()
+  const [busy, setBusy] = useState('')
+  const canShip = order.payment_method === 'cod' || order.payment_status === 'paid'
+  const run = async (action, label) => {
+    if (action === 'cancel' && !confirm('Cancel this shipment in Shiprocket?')) return
+    setBusy(action)
+    try {
+      const r = await api.shiprocket(action, order.id)
+      onChange(r.order); toast(label + (r.warning ? ' — note: ' + r.warning : ''))
+    } catch (e) { toast(e.message) } finally { setBusy('') }
+  }
+  const B = (action, label, Icon, cls = 'outline') => (
+    <button className={`btn ${cls} sm`} disabled={!!busy} onClick={() => run(action, label)}>{busy === action ? <Loader2 size={15} className="spin" /> : <Icon size={15} />} {label}</button>
+  )
+  const err = String(order.shipping_status || '').startsWith('ERROR') ? order.shipping_status : null
+  return (
+    <div className="ship-panel">
+      <h4><Truck size={16} /> Shipping (Shiprocket)</h4>
+      {!api.isLive && <p className="muted small">Available once Supabase and the Shiprocket secrets are set up.</p>}
+      {api.isLive && !canShip && <p className="muted small">Waiting for online payment — paid orders are sent to Shiprocket automatically.</p>}
+      {err && <p className="ship-err">{err}</p>}
+      {(order.sr_order_id || order.awb) && (
+        <div className="ship-grid">
+          <div><span>Shiprocket order</span>{order.sr_order_id || '—'}</div>
+          <div><span>AWB</span>{order.awb || '—'}</div>
+          <div><span>Courier</span>{order.courier || '—'}</div>
+          <div><span>Status</span>{(!err && order.shipping_status) || '—'}{order.etd ? ` · ETA ${String(order.etd).slice(0, 10)}` : ''}</div>
+        </div>
+      )}
+      {api.isLive && canShip && (
+        <div className="a-actions" style={{ marginTop: 0 }}>
+          {!order.sr_order_id && B('create', 'Send to Shiprocket', Send, 'dark')}
+          {!order.awb && B('ship', order.sr_order_id ? 'Assign courier & schedule pickup' : 'Create, assign courier & pickup', Truck, order.sr_order_id ? 'dark' : 'outline')}
+          {order.awb && (order.label_url ? <a className="btn outline sm" href={order.label_url} target="_blank" rel="noreferrer"><FileDown size={15} /> Shipping label</a> : B('label', 'Get label', FileDown))}
+          {order.awb && B('sync', 'Refresh tracking', RefreshCw)}
+          {order.tracking_url && <a className="btn outline sm" href={order.tracking_url} target="_blank" rel="noreferrer"><ExternalLink size={15} /> Track</a>}
+          {order.sr_order_id && order.status !== 'delivered' && String(order.shipping_status || '').toUpperCase() !== 'CANCELED' && B('cancel', 'Cancel shipment', XCircle)}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function Orders() {
   const [orders, setOrders] = useState([]); const [q, setQ] = useState(''); const [st, setSt] = useState('all'); const [sel, setSel] = useState(null)
   const { toast } = useStore()
@@ -137,9 +181,10 @@ function Orders() {
         <div className="fgrid">
           <label className="lbl">Order status<select value={sel.status} onChange={(e) => update({ status: e.target.value })}>{STATUSES.map((s) => <option key={s}>{s}</option>)}</select></label>
           <label className="lbl">Payment status<select value={sel.payment_status} onChange={(e) => update({ payment_status: e.target.value })}>{['pending', 'paid', 'failed', 'refunded'].map((s) => <option key={s}>{s}</option>)}</select></label>
-          <label className="lbl span2">Courier tracking no.<input defaultValue={sel.tracking || ''} onBlur={(e) => e.target.value !== (sel.tracking || '') && update({ tracking: e.target.value })} placeholder="e.g. Delhivery 1234567890" /></label>
+          <label className="lbl span2">Courier tracking no. (only if shipping outside Shiprocket)<input defaultValue={sel.tracking || ''} onBlur={(e) => e.target.value !== (sel.tracking || '') && update({ tracking: e.target.value })} placeholder="e.g. Delhivery 1234567890" /></label>
         </div>
-        <div className="a-actions"><button className="btn outline sm" onClick={() => invoice(sel)}><Printer size={15} /> Invoice</button><a className="btn outline sm" target="_blank" rel="noreferrer" href={`https://wa.me/${String(sel.phone).replace(/\D/g, '').replace(/^(\d{10})$/, '91$1')}?text=${encodeURIComponent(`Hi ${sel.name}, your ${BRAND.name} order #${sel.order_no} is now ${sel.status}.${sel.tracking ? ' Tracking: ' + sel.tracking : ''}`)}`}>WhatsApp customer</a></div>
+        <ShipPanel order={sel} onChange={(o) => { setSel(o); load() }} />
+        <div className="a-actions"><button className="btn outline sm" onClick={() => invoice(sel)}><Printer size={15} /> Invoice</button><a className="btn outline sm" target="_blank" rel="noreferrer" href={`https://wa.me/${String(sel.phone).replace(/\D/g, '').replace(/^(\d{10})$/, '91$1')}?text=${encodeURIComponent(`Hi ${sel.name}, your ${BRAND.name} order #${sel.order_no} is now ${sel.status}.${sel.tracking_url ? ' Track your parcel: ' + sel.tracking_url : sel.tracking ? ' Tracking: ' + sel.tracking : ''}`)}`}>WhatsApp customer</a></div>
       </Modal>}
     </>
   )
@@ -182,6 +227,7 @@ function Products() {
           <label className="lbl">Size<input value={ed.size || ''} onChange={set('size')} placeholder='e.g. 5 inch' /></label>
           <label className="lbl">Wholesale priced per<select value={ed.wholesale_unit || 'piece'} onChange={set('wholesale_unit')}><option value="piece">piece</option><option value="set">set</option></select></label>
           <label className="lbl">Colour note<input value={ed.color_note || ''} onChange={set('color_note')} placeholder="optional" /></label>
+          <label className="lbl">Weight per unit (kg, for shipping)<input type="number" step="0.05" min="0" value={ed.weight ?? ''} onChange={(e) => setEd({ ...ed, weight: e.target.value === '' ? null : Number(e.target.value) })} placeholder="e.g. 0.4" /></label>
           <label className="lbl">Packing<input value={ed.packing || ''} onChange={set('packing')} placeholder="e.g. 100 pcs master box" /></label>
           <label className="lbl">Colours (comma separated)<input value={(ed.colors || []).join(', ')} onChange={(e) => setEd({ ...ed, colors: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} /></label>
           <label className="lbl span2">Wholesale tiers — min qty : rate : master carton (carton optional), e.g. 100:105:12, 500:95:12, 1000:85:4 — leave empty for retail only
